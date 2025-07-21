@@ -1,0 +1,16 @@
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Alert
+metadata:
+  name: alerts
+  namespace: notification
+spec:
+  providerRef:
+    name: telegram
+  eventMetadata:
+    summary: "Cluster status updated"
+  eventSeverity: info
+  eventSources:
+    - kind: GitRepository
+      name: "*"
+    - kind: Kustomization
+      name: "*"
