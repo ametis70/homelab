@@ -1,0 +1,47 @@
+service:
+  annotations:
+    kube-vip.io/loadbalancerIPs: 192.168.88.10
+providers:
+  kubernetesCRD:
+    allowCrossNamespace: true
+logs:
+  general:
+    format: json
+  access:
+    enabled: true
+    format: json
+ports:
+  web:
+    redirections:
+      entryPoint:
+        to: websecure
+        scheme: https
+        permanent: true
+  mail-smtp:
+    port: 8025
+    exposedPort: 25
+    protocol: TCP
+    expose:
+      default: true
+    tls:
+      enabled: false
+  mail-sub:
+    port: 8587
+    exposedPort: 587
+    protocol: TCP
+    expose:
+      default: true
+    tls:
+      enabled: false
+  mail-subs:
+    port: 8465
+    exposedPort: 465
+    protocol: TCP
+    expose:
+      default: true
+  mail-imaps:
+    port: 8993
+    exposedPort: 993
+    protocol: TCP
+    expose:
+      default: true
