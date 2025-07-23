@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-certificate
+  namespace: default
+spec:
+  dnsNames:
+    - ${quote}${DOMAIN}${quote}
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-clusterissuer
+  secretName: wildcard-tls
