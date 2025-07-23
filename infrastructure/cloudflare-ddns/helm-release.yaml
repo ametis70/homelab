@@ -1,0 +1,33 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cloudflare-ddns
+  namespace: cloudflare-ddns
+spec:
+  chart:
+    spec:
+      chart: cloudflare-ddns
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: cloudflare-ddns
+      version: v1.0.3
+  interval: 1h0m0s
+  values:
+    externalSecret: cloudflare-ddns-secrets
+    config:
+      configJson: |
+        {
+          "ipv4_enabled": true,
+          "ipv6_enabled": false,
+          "ttl": 300,
+          "zones": [
+            {
+              "id": "${ZONE_ID}",
+              "name": "${DOMAIN}",
+              "update_root_domain": true,
+              "subdomains": [ "mail" ]
+            }
+          ]
+        }
