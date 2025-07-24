@@ -31,6 +31,8 @@ spec:
   path: ./clusters/production/secrets
   prune: true
   wait: true
+  dependsOn:
+    - name: infrastructure-sealed-secrets
 
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
@@ -91,6 +93,8 @@ spec:
   path: ./infrastructure/traefik
   prune: true
   wait: true
+  dependsOn:
+    - name: infrastructure-cert-manager
 
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
