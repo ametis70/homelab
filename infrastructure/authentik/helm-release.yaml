@@ -1,0 +1,58 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: authentik
+  namespace: authentik
+spec:
+  chart:
+    spec:
+      chart: authentik
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: authentik
+      version: 2025.6.4
+  interval: 1h0m0s
+  values:
+    global:
+      envFrom:
+        - secretRef:
+            name: authentik-secrets
+
+    authentik:
+      error_reporting:
+        enabled: true
+      email:
+        host: "${MAIL_DOMAIN}"
+        port: 465
+        username: "${MAIL_USERNAME}"
+        use_tls: false
+        use_ssl: true
+        timeout: 30
+        from: "Authentik <${MAIL_USERNAME}>"
+
+    server:
+      ingress:
+        enabled: true
+        ingressClassName: traefik
+        hosts:
+          - "authentik.${TLD}"
+
+    postgresql:
+      enabled: true
+      auth:
+        existingSecret: authentik-secrets
+        secretKeys:
+          adminPasswordKey: POSTGRES_PASSWORD
+          userPasswordKey: POSTGRES_PASSWORD
+          replicationPasswordKey: POSTGRES_PASSWORD
+      primary:
+        persistence:
+          size: 1Gi
+
+    redis:
+      enabled: true
+      master:
+        persistence:
+          size: 1Gi
