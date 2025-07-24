@@ -1,0 +1,50 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: vaultwarden
+  namespace: vaultwarden
+spec:
+  chart:
+    spec:
+      chart: vaultwarden
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: vaultwarden
+      version: 0.32.1
+  interval: 1h0m0s
+  values:
+    timeZone: "America/Argentina/Buenos_Aires"
+    domain: "https://vw.${TLD}"
+    signupsAllowed: false
+
+    storage:
+      data:
+        enabled: true
+        name: "vaultwarden-data"
+        size: "5Gi"
+        class: "longhorn"
+        keepPvc: true
+
+      attachments:
+        enabled: true
+        name: "vaultwarden-attachments"
+        size: "5Gi"
+        class: "longhorn"
+        keepPvc: true
+
+    adminToken:
+      value: ${ADMIN_TOKEN}
+
+    smtp:
+      host: mail.${DOMAIN}
+      from: ${MAIL_USER}
+      fromName: "Vault Administrator"
+      existingSecret: vaultwarden-secrets
+      security: force_tls
+      port: 465
+      username:
+        existingSecretKey: MAIL_USERNAME
+      password:
+        existingSecretKey: MAIL_PASSWORD
