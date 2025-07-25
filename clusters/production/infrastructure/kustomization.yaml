@@ -10,3 +10,4 @@ resources:
   - cloudflare-ddns.yaml
   - docker-mailserver.yaml
   - authentik.yaml
+  - cloudnative-pg.yaml
