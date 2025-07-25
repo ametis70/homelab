@@ -14,8 +14,8 @@ spec:
       version: 0.9.3
   valuesFrom:
     - kind: Secret
-      name: immich-secrets
-      valuesKey: DB_PASSWORD
+      name: pg-secrets
+      valuesKey: password
       targetPath: env.DB_PASSWORD
   values:
     env:
@@ -29,11 +29,15 @@ spec:
     redis:
       enabled: true
 
-    persistence:
-      library:
-        existingClaim: immich-library-pvc
+    immich:
+      metrics:
+        enabled: false
+      persistence:
+        library:
+          existingClaim: immich-library-pvc
 
     machine-learning:
+      enabled: true
       persistence:
         cache:
           enabled: true
