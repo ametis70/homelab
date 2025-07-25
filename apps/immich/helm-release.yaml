@@ -1,0 +1,42 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  namespace: immich
+  name: immich
+spec:
+  interval: 1h0m0s
+  chart:
+    spec:
+      chart: immich
+      sourceRef:
+        kind: HelmRepository
+        name: immich
+      version: 0.9.3
+  valuesFrom:
+    - kind: Secret
+      name: immich-secrets
+      valuesKey: DB_PASSWORD
+      targetPath: env.DB_PASSWORD
+  values:
+    env:
+      DB_HOSTNAME: immich-postgres-rw
+      DB_USERNAME: immich
+      DB_DATABASE_NAME: immich
+
+    postgresql:
+      enabled: false
+
+    redis:
+      enabled: true
+
+    persistence:
+      library:
+        existingClaim: immich-library-pvc
+
+    machine-learning:
+      persistence:
+        cache:
+          enabled: true
+          type: pvc
+          storageClass: longhorn
+          size: 10Gi

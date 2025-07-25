@@ -1,0 +1,15 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: vaultwarden-ingress
+  namespace: vaultwarden
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: "Host(`immich.${TLD}`)"
+      priority: 10
+      services:
+        - name: immich
+          port: 80
