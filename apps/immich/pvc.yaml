@@ -25,6 +25,7 @@ spec:
     storage: 500Gi
   accessModes:
     - ReadWriteMany
+  storageClassName: ""
   persistentVolumeReclaimPolicy: Retain
   nfs:
     path: /mnt/main/photos
@@ -32,4 +33,3 @@ spec:
   mountOptions:
     - hard
     - nfsvers=4.1
-
