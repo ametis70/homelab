@@ -21,7 +21,7 @@ spec:
       type: LoadBalancer
       externalTrafficPolicy: Local
       annotations:
-        kube-vip.io/loadbalancerIPs: 192.168.88.10
+        kube-vip.io/loadbalancerIPs: 192.168.88.100
     entryPoints:
       web:
         forwardedHeaders:
