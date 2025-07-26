@@ -18,6 +18,9 @@ spec:
       valuesKey: password
       targetPath: env.DB_PASSWORD
   values:
+    image:
+      tag: v1.136.0
+
     env:
       DB_HOSTNAME: immich-postgres-rw
       DB_USERNAME: immich
