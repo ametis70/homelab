@@ -17,6 +17,9 @@ spec:
   values:
     hostNetwork: true
     dnsPolicy: ClusterFirstWithHostNet
+    api:
+      dashboard: true
+      insecure: false
     service:
       type: LoadBalancer
       externalTrafficPolicy: Local
