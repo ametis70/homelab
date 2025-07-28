@@ -1,0 +1,57 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  namespace: media
+  name: prowlarr
+spec:
+  interval: 1h0m0s
+  chart:
+    spec:
+      chart: app-template
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      version: 3.7.0
+  values:
+    controllers:
+      prowlarr:
+        pod:
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568
+            runAsNonRoot: true
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/prowlarr
+              tag: 2.0.2@sha256:30062fde00bf3901770d02e4e255b3fa1afa320ae2ff5359473ff7599be7ebc8
+            env:
+              TZ: "America/Argentina/Buenos_Aires"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: &port 9696
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+    service:
+      app:
+        controller: prowlarr
+        ports:
+          http:
+            port: *port
+    persistence:
+      config:
+        existingClaim: prowlarr-config
+        globalMounts:
+          - path: /config
+
