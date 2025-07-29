@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jellyseerr
+  namespace: media
+spec:
+  routes:
+    - match: Host(`jellyseerr.${TLD}`)
+      priority: 10
+      middlewares:
+        - name: authentik
+          namespace: authentik
+      services:
+        - name: jellyseerr
+          port: 5055
+
