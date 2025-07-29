@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: traefik
       version: 36.3.0
-  interval: 1h0m0s
+  interval: 24h0m0s
   values:
     hostNetwork: true
     dnsPolicy: ClusterFirstWithHostNet

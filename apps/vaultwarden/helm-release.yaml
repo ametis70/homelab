@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: vaultwarden
       version: 0.32.1
-  interval: 1h0m0s
+  interval: 24h0m0s
   values:
     timeZone: "America/Argentina/Buenos_Aires"
     domain: "https://vw.${TLD}"

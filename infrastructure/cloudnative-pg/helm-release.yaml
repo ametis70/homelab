@@ -12,5 +12,5 @@ spec:
         kind: HelmRepository
         name: cloudnative-pg
       version: 0.24.0
-  interval: 1h0m0s
+  interval: 24h0m0s
 

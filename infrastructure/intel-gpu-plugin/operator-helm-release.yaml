@@ -4,7 +4,7 @@ metadata:
   name: intel-device-plugins-operator
   namespace: intel-gpu-plugin
 spec:
-  interval: 1h0m0s
+  interval: 24h0m0s
   dependsOn:
     - name: cert-manager
       namespace: cert-manager

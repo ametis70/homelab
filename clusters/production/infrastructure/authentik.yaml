@@ -5,9 +5,9 @@ metadata:
   name: infrastructure-authentik
   namespace: flux-system
 spec:
-  interval: 1h
-  retryInterval: 1m
-  timeout: 5m
+  interval: 24h
+  retryInterval: 45s
+  timeout: 4m
   sourceRef:
     kind: GitRepository
     name: flux-system

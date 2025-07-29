@@ -5,3 +5,6 @@ resources:
   - telegram-secrets.yaml
   - telegram-provider.yaml
   - alerts.yaml
+  - webhook-secrets.yaml
+  - webhook-ingressroute.yaml
+  - webhook-receiver.yaml
