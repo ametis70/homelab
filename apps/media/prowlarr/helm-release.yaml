@@ -30,6 +30,8 @@ spec:
               tag: 2.0.2@sha256:30062fde00bf3901770d02e4e255b3fa1afa320ae2ff5359473ff7599be7ebc8
             env:
               TZ: "America/Argentina/Buenos_Aires"
+              PROWLARR__AUTH__METHOD: "External"
+              PROWLARR__AUTH__REQUIRED: "DisabledForLocalAddresses"
             probes:
               liveness: &probes
                 enabled: true
