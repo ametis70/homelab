@@ -1,0 +1,50 @@
+apiVersion: nfd.k8s-sigs.io/v1alpha1
+kind: NodeFeatureRule
+metadata:
+  name: intel-dp-gpu
+  namespace: node-feature-discovery
+spec:
+  rules:
+    - name: "intel.gpu"
+      labels:
+        "intel.feature.node.kubernetes.io/gpu": "true"
+      matchFeatures:
+        - feature: pci.device
+          matchExpressions:
+            vendor: { op: In, value: ["8086"] }
+            class: { op: In, value: ["0300", "0380"] }
+    - name: "intel.gpu.memory.max"
+      labelsTemplate: |
+        {{ range .pci.device }}intel.feature.node.kubernetes.io/gpu-memory.max={{ .sriov_totalvfs }}{{ end }}
+      matchFeatures:
+        - feature: pci.device
+          matchExpressions:
+            vendor: { op: In, value: ["8086"] }
+            class: { op: In, value: ["0300", "0380"] }
+    - name: "intel.gpu.millicores"
+      labelsTemplate: |
+        {{ range .pci.device }}intel.feature.node.kubernetes.io/gpu-millicores={{ .sriov_totalvfs | mul 1000 }}{{ end }}
+      matchFeatures:
+        - feature: pci.device
+          matchExpressions:
+            vendor: { op: In, value: ["8086"] }
+            class: { op: In, value: ["0300", "0380"] }
+---
+apiVersion: nfd.k8s-sigs.io/v1alpha1
+kind: NodeFeatureRule
+metadata:
+  name: intel-dp-sgx
+  namespace: node-feature-discovery
+spec:
+  rules:
+    - name: "intel.sgx"
+      labels:
+        "intel.feature.node.kubernetes.io/sgx": "true"
+      matchFeatures:
+        - feature: cpu.cpuid
+          matchExpressions:
+            SGX: { op: Exists }
+        - feature: cpu.cpuid
+          matchExpressions:
+            SGXLC: { op: Exists }
+
