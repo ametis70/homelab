@@ -11,3 +11,5 @@ resources:
   - docker-mailserver.yaml
   - authentik.yaml
   - cloudnative-pg.yaml
+  - nfd.yaml
+  - intel-gpu-plugin.yaml
