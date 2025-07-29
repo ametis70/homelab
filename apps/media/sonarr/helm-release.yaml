@@ -30,6 +30,8 @@ spec:
               tag: 4.0.15@sha256:ca6c735014bdfb04ce043bf1323a068ab1d1228eea5bab8305ca0722df7baf78
             env:
               TZ: "America/Argentina/Buenos_Aires"
+              SONARR__AUTH__METHOD: "External"
+              SONARR__AUTH__REQUIRED: "DisabledForLocalAddresses"
             probes:
               liveness: &probes
                 enabled: true

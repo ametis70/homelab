@@ -30,6 +30,8 @@ spec:
               tag: 5.27.2@sha256:aa84b8341e2b53281bcea4696427861e4ab02ab004cd76a1b3a76d77ea065ac5
             env:
               TZ: "America/Argentina/Buenos_Aires"
+              RADARR__AUTH__METHOD: "External"
+              RADARR__AUTH__REQUIRED: "DisabledForLocalAddresses"
             probes:
               liveness: &probes
                 enabled: true
