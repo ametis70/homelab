@@ -9,4 +9,5 @@ resources:
   - prowlarr/
   - bazarr/
   - jellyfin/
+  - jellyseerr/
 
