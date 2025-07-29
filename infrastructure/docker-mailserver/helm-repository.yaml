@@ -5,5 +5,5 @@ metadata:
   name: docker-mailserver
   namespace: mail
 spec:
-  interval: 1h0m0s
+  interval: 24h0m0s
   url: https://docker-mailserver.github.io/docker-mailserver-helm

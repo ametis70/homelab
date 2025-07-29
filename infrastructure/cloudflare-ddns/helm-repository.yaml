@@ -5,5 +5,5 @@ metadata:
   name: cloudflare-ddns
   namespace: cloudflare-ddns
 spec:
-  interval: 1h0m0s
+  interval: 24h0m0s
   url: https://cloudflare-ddns.aureum.cloud

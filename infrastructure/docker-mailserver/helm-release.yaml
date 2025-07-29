@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: docker-mailserver
       version: 4.2.2
-  interval: 1h0m0s
+  interval: 24h0m0s
   values:
     certificate: mail-tls-certificate-rsa
     deployment:

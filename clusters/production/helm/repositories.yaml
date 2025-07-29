@@ -4,7 +4,7 @@ metadata:
   name: cluster-helm-repositories
   namespace: flux-system
 spec:
-  interval: 1h0m0s
+  interval: 24h0m0s
   retryInterval: 1m
   timeout: 5m
   wait: true

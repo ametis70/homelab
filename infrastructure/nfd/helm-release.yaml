@@ -4,7 +4,7 @@ metadata:
   namespace: node-feature-discovery
   name: node-feature-discovery
 spec:
-  interval: 1h0m0s
+  interval: 24h0m0s
   chart:
     spec:
       chart: node-feature-discovery
