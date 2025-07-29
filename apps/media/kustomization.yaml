@@ -8,4 +8,5 @@ resources:
   - radarr/
   - prowlarr/
   - bazarr/
+  - jellyfin/
 

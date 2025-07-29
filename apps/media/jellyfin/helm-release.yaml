@@ -1,0 +1,94 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  namespace: media
+  name: jellyfin
+spec:
+  interval: 1h0m0s
+  chart:
+    spec:
+      chart: app-template
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      version: 3.7.0
+  values:
+    controllers:
+      jellyfin:
+        pod:
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568
+            runAsNonRoot: true
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+          nodeSelector:
+            gpu: "intel"
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: gpu
+                        operator: In
+                        values:
+                          - "intel"
+        containers:
+          app:
+            image:
+              repository: jellyfin/jellyfin
+              tag: 10.10.3
+            env:
+              TZ: "America/Argentina/Buenos_Aires"
+              JELLYFIN_PublishedServerUrl: "https://jellyfin.${TLD}"
+            resources:
+              requests:
+                cpu: 500m
+                memory: 2Gi
+                gpu.intel.com/i915: 1
+              limits:
+                cpu: 4000m
+                memory: 8Gi
+                gpu.intel.com/i915: 1
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: &port 8096
+                  initialDelaySeconds: 60
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 3
+              readiness: *probes
+    service:
+      app:
+        controller: jellyfin
+        ports:
+          http:
+            port: *port
+    persistence:
+      config:
+        existingClaim: jellyfin-config
+        globalMounts:
+          - path: /config
+      movies:
+        existingClaim: media-movies-pvc
+        globalMounts:
+          - path: /media/movies
+      tv:
+        existingClaim: media-tv-pvc
+        globalMounts:
+          - path: /media/tv
+      transcodes:
+        type: emptyDir
+        globalMounts:
+          - path: /config/transcodes
+            subPath: transcodes
+      cache:
+        type: emptyDir
+        globalMounts:
+          - path: /cache
