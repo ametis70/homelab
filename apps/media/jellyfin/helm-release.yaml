@@ -12,7 +12,7 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-      version: 3.7.0
+      version: 4.2.0
   values:
     controllers:
       jellyfin:
@@ -23,17 +23,20 @@ spec:
             runAsNonRoot: true
             fsGroup: 568
             fsGroupChangePolicy: OnRootMismatch
+            supplementalGroups:
+              - 44   # video group for GPU access
+              - 105  # render group for GPU access
           nodeSelector:
-            gpu: "intel"
+            intel.feature.node.kubernetes.io/gpu: "true"
           affinity:
             nodeAffinity:
               requiredDuringSchedulingIgnoredDuringExecution:
                 nodeSelectorTerms:
                   - matchExpressions:
-                      - key: gpu
+                      - key: intel.feature.node.kubernetes.io/gpu
                         operator: In
                         values:
-                          - "intel"
+                          - "true"
         containers:
           app:
             image:
@@ -42,15 +45,22 @@ spec:
             env:
               TZ: "America/Argentina/Buenos_Aires"
               JELLYFIN_PublishedServerUrl: "https://jellyfin.${TLD}"
+              # Intel GPU (iHD driver) configuration
+              LIBVA_DRIVER_NAME: "iHD"
+              INTEL_MEDIA_RUNTIME: "1"
+            securityContext:
+              privileged: false
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities:
+                add:
+                  - SETUID
+                  - SETGID
             resources:
               requests:
-                cpu: 500m
-                memory: 2Gi
-                gpu.intel.com/i915: 1
+                gpu.intel.com/i915: 1000m
               limits:
-                cpu: 4000m
-                memory: 8Gi
-                gpu.intel.com/i915: 1
+                gpu.intel.com/i915: 1000m
             probes:
               liveness: &probes
                 enabled: true
@@ -92,3 +102,10 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /cache
+      # Intel GPU device access for hardware transcoding
+      dri:
+        type: hostPath
+        hostPath: /dev/dri
+        hostPathType: Directory
+        globalMounts:
+          - path: /dev/dri
