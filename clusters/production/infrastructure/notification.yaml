@@ -16,3 +16,8 @@ spec:
   wait: true
   dependsOn:
     - name: infrastructure-traefik
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: ingress-secrets-system
+        optional: false
