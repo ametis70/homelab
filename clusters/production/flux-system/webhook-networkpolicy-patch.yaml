@@ -1,0 +1,18 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-webhooks
+  namespace: flux-system
+spec:
+  ingress:
+  # Allow external traffic (for Traefik with hostNetwork: true)
+  - {}
+  # Allow traffic from any namespace (original behavior)
+  - from:
+    - namespaceSelector: {}
+  podSelector:
+    matchLabels:
+      app: notification-controller
+  policyTypes:
+  - Ingress 

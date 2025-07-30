@@ -2,9 +2,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - telegram-secrets.yaml
+  - webhook-receiver-ingressroute.yaml
+  - github-receiver.yaml
+  - github-receiver-secrets.yaml
+  - telegram-provider-alerts.yaml
   - telegram-provider.yaml
-  - alerts.yaml
-  - webhook-secrets.yaml
-  - webhook-ingressroute.yaml
-  - webhook-receiver.yaml
+  - telegram-provider-secrets.yaml
