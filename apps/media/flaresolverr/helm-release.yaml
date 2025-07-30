@@ -16,13 +16,6 @@ spec:
   values:
     controllers:
       flaresolverr:
-        pod:
-          securityContext:
-            runAsUser: 568
-            runAsGroup: 568
-            runAsNonRoot: true
-            fsGroup: 568
-            fsGroupChangePolicy: OnRootMismatch
         containers:
           app:
             image:
@@ -56,4 +49,3 @@ spec:
         existingClaim: flaresolverr-config
         globalMounts:
           - path: /config
-
