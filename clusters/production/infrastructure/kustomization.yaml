@@ -13,3 +13,4 @@ resources:
   - cloudnative-pg.yaml
   - nfd.yaml
   - intel-gpu-plugin.yaml
+  - monitoring.yaml
