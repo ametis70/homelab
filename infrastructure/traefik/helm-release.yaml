@@ -15,8 +15,6 @@ spec:
       version: 36.3.0
   interval: 24h0m0s
   values:
-    hostNetwork: true
-    dnsPolicy: ClusterFirstWithHostNet
     api:
       dashboard: true
       insecure: false
