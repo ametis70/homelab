@@ -4,4 +4,5 @@ resources:
   - vaultwarden.yaml
   - immich.yaml
   - media.yaml
+  - home-assistant.yaml
   # - whatsmyip.yaml
