@@ -1,0 +1,58 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  chart:
+    spec:
+      chart: grafana
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+      version: 9.3.0
+  interval: 24h0m0s
+  values:
+    persistence:
+      type: pvc
+      enabled: true
+      storageClassName: longhorn
+      accessModes:
+        - ReadWriteOnce
+      size: 2Gi
+
+    admin:
+      existingSecret: monitoring-grafana-secrets
+      userKey: admin-user
+      passwordKey: admin-password
+
+    grafana.ini:
+      server:
+        domain: grafana.${TLD}
+        root_url: https://grafana.${TLD}
+      auth:
+        signout_redirect_url: "https://authentik.${TLD}/application/o/grafana/end-session/"
+        oauth_auto_login: true
+      auth.generic_oauth:
+        name: authentik
+        enabled: true
+        client_id: "$__file{/etc/secrets/grafana-oauth/client_id}"
+        client_secret: "$__file{/etc/secrets/grafana-oauth/client_secret}"
+        scopes: "openid profile email"
+        auth_url: "https://authentik.${TLD}/application/o/authorize/"
+        token_url: "https://authentik.${TLD}/application/o/token/"
+        api_url: "https://authentik.${TLD}/application/o/userinfo/"
+        role_attribute_path: contains(groups, 'Grafana Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'
+
+    extraSecretMounts:
+      - name: grafana-oauth-secrets
+        secretName: monitoring-grafana-oauth-secrets
+        defaultMode: 0440
+        mountPath: /etc/secrets/grafana-oauth
+        readOnly: true
+
+    service:
+      type: ClusterIP
+      port: 80
