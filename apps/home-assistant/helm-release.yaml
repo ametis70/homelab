@@ -1,0 +1,68 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  namespace: home-assistant
+  name: home-assistant
+spec:
+  interval: 24h0m0s
+  chart:
+    spec:
+      chart: app-template
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      version: 4.2.0
+  values:
+    controllers:
+      home-assistant:
+        pod:
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            fsGroup: 65534
+            fsGroupChangePolicy: OnRootMismatch
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/home-assistant
+              tag: 2025.7.4@sha256:0f7f057d1817c7bed5632ce510ffcc921799ff34e75c6a53346994ba6c7b14ab
+            env:
+              TZ: "America/Argentina/Buenos_Aires"
+            securityContext:
+              privileged: false
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                cpu: 2000m
+                memory: 2Gi
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 8123
+                  initialDelaySeconds: 60
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 3
+              readiness: *probes
+    service:
+      app:
+        controller: home-assistant
+        ports:
+          http:
+            port: *port
+    persistence:
+      config:
+        existingClaim: home-assistant-config
+        globalMounts:
+          - path: /config
+
