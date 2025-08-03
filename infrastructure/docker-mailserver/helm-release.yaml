@@ -20,3 +20,25 @@ spec:
         OVERRIDE_HOSTNAME: ${DOMAIN}
         POSTMASTER_ADDRESS: ${POSTMASTER_ADDRESS}
         ENABLE_FAIL2BAN: 1
+    # Configure persistent volume claims
+    persistent_volume_claims:
+      mail-config:
+        enabled: true
+        existingClaim: docker-mailserver-config
+        size: 1Gi
+        storageClass: longhorn
+      mail-data:
+        enabled: true
+        existingClaim: docker-mailserver-data
+        size: 10Gi
+        storageClass: longhorn
+      mail-state:
+        enabled: true
+        existingClaim: docker-mailserver-state
+        size: 5Gi
+        storageClass: longhorn
+      mail-log:
+        enabled: true
+        existingClaim: docker-mailserver-logs
+        size: 2Gi
+        storageClass: longhorn
