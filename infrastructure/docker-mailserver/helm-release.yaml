@@ -7,12 +7,11 @@ metadata:
 spec:
   chart:
     spec:
-      chart: docker-mailserver
-      reconcileStrategy: ChartVersion
+      chart: charts/docker-mailserver
+      reconcileStrategy: Revision
       sourceRef:
-        kind: HelmRepository
+        kind: GitRepository
         name: docker-mailserver
-      version: 4.2.2
   interval: 24h0m0s
   values:
     certificate: mail-tls-certificate-rsa
