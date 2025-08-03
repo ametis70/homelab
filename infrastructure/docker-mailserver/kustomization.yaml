@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - git-repository.yaml
+  - pvc.yaml
   - certificate.yaml
   - helm-release.yaml
   - ingressroute.yaml
