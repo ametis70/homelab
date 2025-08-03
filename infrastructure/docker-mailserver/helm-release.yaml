@@ -7,19 +7,26 @@ metadata:
 spec:
   chart:
     spec:
-      chart: charts/docker-mailserver
-      reconcileStrategy: Revision
+      chart: docker-mailserver
       sourceRef:
-        kind: GitRepository
+        kind: HelmRepository
         name: docker-mailserver
+      version: 4.2.2
   interval: 24h0m0s
   values:
     certificate: mail-tls-certificate-rsa
+    proxyProtocol:
+      enabled: false
     deployment:
       env:
         OVERRIDE_HOSTNAME: ${DOMAIN}
         POSTMASTER_ADDRESS: ${POSTMASTER_ADDRESS}
         ENABLE_FAIL2BAN: 1
+    service:
+      type: LoadBalancer
+      externalTrafficPolicy: Local
+      annotations:
+        kube-vip.io/loadbalancerIPs: 192.168.88.101
     # Configure persistent volume claims
     persistent_volume_claims:
       mail-config:
