@@ -1,0 +1,142 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  namespace: outline
+  name: outline
+spec:
+  interval: 24h0m0s
+  chart:
+    spec:
+      chart: outline
+      sourceRef:
+        kind: HelmRepository
+        name: community-charts
+        namespace: flux-system
+      version: 0.6.0
+  valuesFrom:
+    - kind: Secret
+      name: auth-secrets
+      valuesKey: client_id
+      targetPath: auth.oidc.clientId
+    - kind: Secret
+      name: pg-secrets
+      valuesKey: username
+      targetPath: externalPostgresql.username
+
+  values:
+    replicaCount: 1
+    url: https://outline.${TLD}
+
+    redis:
+      enabled: true
+      architecture: standalone
+      auth:
+        enabled: true
+      master:
+        persistence:
+          enabled: true
+          size: 2Gi
+          storageClass: longhorn
+
+    postgresql:
+      enabled: false
+
+    minio:
+      enabled: false
+
+    externalPostgresql:
+      host: outline-postgres-rw
+      # username: secret
+      database: outline
+      port: 5432
+      existingSecret: pg-secrets
+      passwordSecretKey: password
+
+    extraEnvVars:
+      FILE_STORAGE: local
+      FILE_STORAGE_LOCAL_ROOT_DIR: /var/lib/outline/data
+
+    smtp:
+      host: mail.${TLD}
+      port: 465
+      fromEmail: outline@${TLD}
+      replyEmail: no-reply@${TLD}
+      secure: true
+      existingSecret:
+        name: mail-secrets
+        usernameKey: username
+        passwordKey: password
+
+    fileStorage:
+      mode: local
+      local:
+        rootDir: /var/lib/outline/data
+        persistence:
+          enabled: true
+          accessModes:
+            - ReadWriteOnce
+          existingClaim: outline-files
+          size: 2Gi
+          storageClass: longhorn
+
+    auth:
+      oidc:
+        enabled: true
+        # clientId: secret
+        authUri: "https://authentik.${TLD}/application/o/authorize/"
+        tokenUri: "https://authentik.${TLD}/application/o/token/"
+        userInfoUri: "https://authentik.${TLD}/application/o/userinfo/"
+        logoutUri: "https://authentik.${TLD}/application/o/outline/end-session/"
+        usernameClaim: preferred_username
+        displayName: "Authentik"
+        scopes:
+          - openid
+          - profile
+          - email
+        existingSecret:
+          name: "auth-secrets"
+          clientSecretKey: "client_secret"
+
+    ingress:
+      enabled: false
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+
+    podSecurityContext:
+      runAsUser: 1001
+      runAsGroup: 1001
+      fsGroup: 1001
+      fsGroupChangePolicy: OnRootMismatch
+
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      runAsUser: 1001
+      runAsGroup: 1001
+
+    livenessProbe:
+      httpGet:
+        path: /_health
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 30
+      timeoutSeconds: 3
+      failureThreshold: 5
+
+    readinessProbe:
+      httpGet:
+        path: /_health
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 30
+      timeoutSeconds: 3
+      failureThreshold: 5

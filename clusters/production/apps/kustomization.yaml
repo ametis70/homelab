@@ -5,4 +5,6 @@ resources:
   - immich.yaml
   - media.yaml
   - home-assistant.yaml
+  - outline.yaml
   # - whatsmyip.yaml
+
