@@ -8,6 +8,5 @@ spec:
     - match: Host(`grafana.${TLD}`)
       priority: 10
       services:
-        - name: grafana
-          port: 80
-
+        - name: grafana-service
+          port: 3000

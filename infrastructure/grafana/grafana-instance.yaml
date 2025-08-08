@@ -1,0 +1,61 @@
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  config:
+    server:
+      domain: "grafana.${TLD}"
+      root_url: "https://grafana.${TLD}"
+    auth:
+      signout_redirect_url: "https://authentik.${TLD}/application/o/grafana/end-session/"
+      oauth_auto_login: "true"
+    auth.generic_oauth:
+      name: authentik
+      enabled: "true"
+      client_id: "$__file{/etc/secrets/grafana-oauth/client_id}"
+      client_secret: "$__file{/etc/secrets/grafana-oauth/client_secret}"
+      scopes: "openid profile email"
+      auth_url: "https://authentik.${TLD}/application/o/authorize/"
+      token_url: "https://authentik.${TLD}/application/o/token/"
+      api_url: "https://authentik.${TLD}/application/o/userinfo/"
+      role_attribute_path: "contains(groups, 'Grafana Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'"
+  
+  deployment:
+    spec:
+      template:
+        spec:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 472
+            fsGroup: 472
+            fsGroupChangePolicy: OnRootMismatch
+          volumes:
+            - name: grafana-oauth-secrets
+              secret:
+                secretName: monitoring-grafana-oauth-secrets
+                defaultMode: 292  # 0444 in decimal so any user can read
+          containers:
+            - name: grafana
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 472
+                capabilities:
+                  drop:
+                    - ALL
+              volumeMounts:
+                - name: grafana-oauth-secrets
+                  mountPath: /etc/secrets/grafana-oauth
+                  readOnly: true
+  
+  persistentVolumeClaim:
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 2Gi
+      storageClassName: longhorn

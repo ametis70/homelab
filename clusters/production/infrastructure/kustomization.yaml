@@ -13,5 +13,6 @@ resources:
   - cloudnative-pg.yaml
   - nfd.yaml
   - intel-gpu-plugin.yaml
-  - monitoring.yaml
+  - grafana-operator.yaml
+  - grafana.yaml
   - prometheus.yaml
