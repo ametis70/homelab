@@ -1,22 +1,21 @@
----
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: infrastructure-grafana
+  name: cluster-external
   namespace: flux-system
 spec:
-  interval: 24h
-  retryInterval: 2m
-  timeout: 10m
+  interval: 24h0m0s
+  retryInterval: 1m
+  timeout: 5m
+  wait: true
+  path: ./external
+  prune: false
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure/grafana
-  prune: true
-  wait: true
   dependsOn:
     - name: cluster-secrets
-    - name: infrastructure-traefik
+    - name: infrastructure-sealed-secrets
   postBuild:
     substituteFrom:
       - kind: Secret
