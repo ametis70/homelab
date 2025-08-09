@@ -17,4 +17,5 @@ spec:
   dependsOn:
     - name: cluster-secrets
     - name: infrastructure-longhorn
+    - name: infrastructure-grafana
 

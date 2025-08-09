@@ -52,6 +52,9 @@ spec:
 
     grafana:
       enabled: false
+      # Deploy only dashboards/ConfigMaps for consumption by Grafana Operator
+      forceDeployDashboards: true
+      defaultDashboardsEnabled: true
 
     # Enable essential monitoring components
     prometheus-node-exporter:
