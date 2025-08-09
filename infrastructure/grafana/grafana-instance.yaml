@@ -4,6 +4,8 @@ kind: Grafana
 metadata:
   name: grafana
   namespace: monitoring
+  labels:
+    dashboards: "grafana"
 spec:
   config:
     server:
@@ -27,12 +29,19 @@ spec:
     spec:
       template:
         spec:
+          automountServiceAccountToken: true
+          serviceAccountName: grafana
           securityContext:
             runAsNonRoot: true
             runAsUser: 472
             fsGroup: 472
             fsGroupChangePolicy: OnRootMismatch
           volumes:
+            - name: grafana-dashboard-providers
+              configMap:
+                name: grafana-dashboard-providers
+            - name: grafana-dashboards
+              emptyDir: {}
             - name: grafana-oauth-secrets
               secret:
                 secretName: monitoring-grafana-oauth-secrets
@@ -50,6 +59,34 @@ spec:
                 - name: grafana-oauth-secrets
                   mountPath: /etc/secrets/grafana-oauth
                   readOnly: true
+                - name: grafana-dashboard-providers
+                  mountPath: /etc/grafana/provisioning/dashboards
+                  readOnly: true
+                - name: grafana-dashboards
+                  mountPath: /tmp/dashboards
+            - name: grafana-sc-dashboard
+              image: quay.io/kiwigrid/k8s-sidecar:1.30.5
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: LABEL
+                  value: grafana_dashboard
+                - name: FOLDER
+                  value: /tmp/dashboards
+                - name: RESOURCE
+                  value: configmap
+                - name: LABEL_VALUE
+                  value: "1"
+                - name: UNIQUE_FILENAMES
+                  value: "false"
+                - name: WATCH_METHOD
+                  value: watch
+                - name: TRY_REFRESH_TOKEN
+                  value: "true"
+                - name: NAMESPACE
+                  value: ALL
+              volumeMounts:
+                - name: grafana-dashboards
+                  mountPath: /tmp/dashboards
   
   persistentVolumeClaim:
     spec:
