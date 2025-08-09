@@ -1,0 +1,15 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: external-garage
+  namespace: traefik
+spec:
+  routes:
+    - match: Host(`garage.${TLD}`)
+      priority: 10
+      services:
+        - name: external-garage
+          port: ui
+      middlewares:
+        - name: lan-allowlist
+          namespace: traefik

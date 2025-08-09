@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-garage
+  namespace: traefik
+spec:
+  ports:
+    - name: ui
+      port: 30186
+      targetPort: 30186
+    - name: rpc
+      port: 30187
+      targetPort: 30187
+    - name: s3-api
+      port: 30188
+      targetPort: 30188
+    - name: s3-web
+      port: 30189
+      targetPort: 30189
+    - name: admin
+      port: 30190
+      targetPort: 30190
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: external-garage
+  namespace: traefik
+subsets:
+  - addresses:
+      - ip: 192.168.88.60
+    ports:
+      - name: ui
+        port: 30186
+        protocol: TCP
+      - name: rpc
+        port: 30187
+        protocol: TCP
+      - name: s3-api
+        port: 30188
+        protocol: TCP
+      - name: s3-web
+        port: 30189
+        protocol: TCP
+      - name: admin
+        port: 30190
+        protocol: TCP

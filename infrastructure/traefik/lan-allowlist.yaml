@@ -1,0 +1,11 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: lan-allowlist
+  namespace: traefik
+spec:
+  ipAllowList:
+    sourceRange:
+      - "192.168.88.0/24"
+      - "10.0.88.0/24"
+
