@@ -5,7 +5,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: grafana
-    namespace: monitoring
+    namespace: grafana
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

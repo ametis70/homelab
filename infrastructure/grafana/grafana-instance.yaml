@@ -3,7 +3,7 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: Grafana
 metadata:
   name: grafana
-  namespace: monitoring
+  namespace: grafana
   labels:
     dashboards: "grafana"
 spec:
@@ -44,7 +44,7 @@ spec:
               emptyDir: {}
             - name: grafana-oauth-secrets
               secret:
-                secretName: monitoring-grafana-oauth-secrets
+                secretName: grafana-oauth-secrets
                 defaultMode: 292  # 0444 in decimal so any user can read
           containers:
             - name: grafana
