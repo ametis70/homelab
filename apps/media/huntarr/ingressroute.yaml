@@ -1,0 +1,15 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: huntarr
+  namespace: media
+spec:
+  routes:
+    - match: Host(`huntarr.${TLD}`)
+      priority: 10
+      middlewares:
+        - name: authentik
+          namespace: authentik
+      services:
+        - name: huntarr
+          port: 9705
