@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: fallenbagel/jellyseerr
-              tag: 2.1.0
+              tag: preview-OIDC@sha256:5c54ef90fe9a46afb68caddcb142cffeeba693967efca377d87f0c482b3b23d8
             env:
               TZ: "America/Argentina/Buenos_Aires"
               LOG_LEVEL: "debug"

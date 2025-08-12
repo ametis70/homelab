@@ -7,10 +7,6 @@ spec:
   routes:
     - match: Host(`jellyseerr.${TLD}`)
       priority: 10
-      middlewares:
-        - name: authentik
-          namespace: authentik
       services:
         - name: jellyseerr
           port: 5055
-
