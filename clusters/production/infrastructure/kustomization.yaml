@@ -17,3 +17,4 @@ resources:
   - grafana.yaml
   - prometheus.yaml
   - thanos.yaml
+  - alloy.yaml
