@@ -18,3 +18,4 @@ resources:
   - prometheus.yaml
   - thanos.yaml
   - alloy.yaml
+  - loki.yaml

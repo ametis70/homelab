@@ -1,0 +1,85 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: loki
+  namespace: loki
+spec:
+  chart:
+    spec:
+      chart: loki
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: flux-system
+      version: 6.36.1
+  interval: 24h0m0s
+  values:
+    deploymentMode: SingleBinary
+
+    global:
+      extraArgs:
+        - -config.expand-env=true
+      extraEnvFrom:
+        - secretRef:
+            name: loki-objstore-secrets
+
+    loki:
+      auth_enabled: false
+      commonConfig:
+        replication_factor: 1
+        path_prefix: /var/loki
+
+      schemaConfig:
+        configs:
+          - from: "2025-01-01"
+            store: tsdb
+            object_store: s3
+            schema: v13
+            index:
+              prefix: loki_index_
+              period: 24h
+
+      storage:
+        type: s3
+        bucketNames:
+          chunks: loki-chunks
+          ruler: loki-ruler
+        s3:
+          endpoint: external-garage.traefik.svc.cluster.local:30188
+          region: garage
+          s3ForcePathStyle: true
+          insecure: true
+          accessKeyId: ${LOKI_S3_ACCESS_KEY_ID}
+          secretAccessKey: ${LOKI_S3_SECRET_ACCESS_KEY}
+
+      limits_config:
+        reject_old_samples: true
+        reject_old_samples_max_age: 168h
+
+    persistence:
+      enabled: true
+      existingClaim: loki-data
+      mountPath: /var/loki
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+    service:
+      type: ClusterIP
+      port: 3100
+
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      fsGroup: 1000
+
+    podSecurityContext:
+      fsGroup: 1000
+

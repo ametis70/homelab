@@ -13,4 +13,5 @@ resources:
   - grafana-instance.yaml
   - prometheus-datasource.yaml
   - thanos-datasource.yaml
+  - loki-datasource.yaml
   - ingressroute.yaml
