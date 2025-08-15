@@ -4,4 +4,5 @@ resources:
   - namespace.yaml
   - helm-repository.yaml
   - helm-release.yaml
-
+  - prometheus-ingressroute.yaml
+  - alertmanager-ingressroute.yaml

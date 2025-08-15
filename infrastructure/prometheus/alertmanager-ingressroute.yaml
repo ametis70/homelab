@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: alertmanager
+  namespace: prometheus-system
+spec:
+  routes:
+    - match: Host(`alertmanager.${TLD}`)
+      priority: 10
+      middlewares:
+        - name: authentik
+          namespace: authentik
+      services:
+        - name: alertmanager-operated
+          port: 9093
+

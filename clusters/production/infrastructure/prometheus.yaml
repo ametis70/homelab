@@ -18,4 +18,8 @@ spec:
     - name: cluster-secrets
     - name: infrastructure-longhorn
     - name: infrastructure-grafana
-
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: ingress-secrets-system
+        optional: false

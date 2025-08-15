@@ -51,9 +51,9 @@ spec:
             name: thanos-objstore-config
             namespace: thanos-system
 
-    # Disable components we already have separately
+    # Alertmanager configuration
     alertmanager:
-      enabled: false
+      enabled: true
 
     grafana:
       enabled: false
