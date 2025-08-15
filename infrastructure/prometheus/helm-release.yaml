@@ -47,9 +47,10 @@ spec:
             cpu: 500m
         thanos:
           objectStorageConfig:
-            key: objstore.yml
-            name: thanos-objstore-config
-            namespace: thanos-system
+            existingSecret:
+              name: thanos-objstore-secrets
+              key: objstore.yml
+          sidecar: true
 
     # Alertmanager configuration
     alertmanager:

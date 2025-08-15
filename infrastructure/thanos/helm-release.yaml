@@ -26,6 +26,10 @@ spec:
         requests:
           cpu: 250m
           memory: 512Mi
+      dnsDiscovery:
+        enabled: true
+        sidecarsService: prometheus-operated
+        sidecarsNamespace: prometheus-system
 
     storegateway:
       enabled: true
@@ -60,8 +64,24 @@ spec:
 
     queryFrontend:
       enabled: false
+
     ruler:
-      enabled: false
+      enabled: true
+      replicaCount: 1
+      resources:
+        limits:
+          cpu: 300m
+          memory: 512Mi
+        requests:
+          cpu: 150m
+          memory: 256Mi
+      persistence:
+        enabled: true
+        storageClass: longhorn
+        size: 1Gi
+      alertmanagers:
+        - http://prometheus-operator-kube-p-alertmanager.prometheus-system.svc.cluster.local:9093
+      existingConfigmap: thanos-ruler-config
     minio:
       enabled: false
 
@@ -75,3 +95,9 @@ spec:
     podSecurityContext:
       enabled: true
       fsGroup: 1001
+
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        interval: 30s
