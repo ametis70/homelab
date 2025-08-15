@@ -16,3 +16,4 @@ resources:
   - grafana-operator.yaml
   - grafana.yaml
   - prometheus.yaml
+  - thanos.yaml

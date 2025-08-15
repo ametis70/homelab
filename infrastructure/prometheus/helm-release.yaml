@@ -45,6 +45,11 @@ spec:
           limits:
             memory: 1Gi
             cpu: 500m
+        thanos:
+          objectStorageConfig:
+            key: objstore.yml
+            name: thanos-objstore-config
+            namespace: thanos-system
 
     # Disable components we already have separately
     alertmanager:
@@ -62,4 +67,3 @@ spec:
 
     kube-state-metrics:
       enabled: true
-
