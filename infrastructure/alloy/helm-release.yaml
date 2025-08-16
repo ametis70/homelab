@@ -16,127 +16,106 @@ spec:
         namespace: flux-system
       version: 1.2.1
   values:
-    config:
-      server:
-        log_level: info
-        http_listen_port: 12345
-        grpc_listen_port: 12346
+    alloy:
+      env:
+        - name: HOST_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+      configMap:
+        create: true
+        content: |-
+          logging {
+            level  = "info"
+            format = "logfmt"
+          }
 
-      logs:
-        configs:
-          - name: kubernetes-logs
-            positions:
-              filename: /var/lib/grafana-agent/positions.yaml
-            clients:
-              - url: http://loki.loki.svc.cluster.local:3100/loki/api/v1/push
-                external_labels:
-                  cluster: production
-            scrape_configs:
-              - job_name: kubernetes-pods
-                kubernetes_sd_configs:
-                  - role: pod
-                pipeline_stages:
-                  - docker: {}
-                relabel_configs:
-                  - source_labels:
-                      [
-                        __meta_kubernetes_pod_annotation_logging_grafana_com_logs,
-                      ]
-                    action: keep
-                    regex: true
-                  - source_labels:
-                      [
-                        __meta_kubernetes_pod_annotation_logging_grafana_com_logs_path,
-                      ]
-                    action: replace
-                    target_label: __path__
-                    regex: (.+)
-                  - source_labels: [__meta_kubernetes_namespace]
-                    action: replace
-                    target_label: namespace
-                  - source_labels: [__meta_kubernetes_pod_name]
-                    action: replace
-                    target_label: pod
-                  - source_labels: [__meta_kubernetes_pod_label_app]
-                    action: replace
-                    target_label: app
+          loki.write "default" {
+            external_labels = {
+              cluster = "production",
+            }
+            endpoint {
+              url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
+            }
+          }
 
-      metrics:
-        global:
-          scrape_interval: 15s
-          evaluation_interval: 15s
-        configs:
-          - name: kubernetes-metrics
-            remote_write:
-              - url: http://prometheus-operator-kube-p-prometheus.prometheus-system:9090/api/v1/write
-            scrape_configs:
-              - job_name: kubernetes-pods
-                kubernetes_sd_configs:
-                  - role: pod
-                metrics_path: /metrics
-                scheme: https
-                tls_config:
-                  ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-                  insecure_skip_verify: false
-                authorization:
-                  type: Bearer
-                  credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-                relabel_configs:
-                  - source_labels:
-                      [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
-                    action: keep
-                    regex: true
-                  - source_labels:
-                      [__meta_kubernetes_pod_annotation_prometheus_io_path]
-                    action: replace
-                    target_label: __metrics_path__
-                    regex: (.+)
-                  - source_labels:
-                      [
-                        __address__,
-                        __meta_kubernetes_pod_annotation_prometheus_io_port,
-                      ]
-                    action: replace
-                    regex: ([^:]+)(?::\d+)?;(\d+)
-                    replacement: $1:$2
-                    target_label: __address__
-                  - action: labelmap
-                    regex: __meta_kubernetes_pod_label_(.+)
-                  - source_labels: [__meta_kubernetes_namespace]
-                    action: replace
-                    target_label: namespace
-                  - source_labels: [__meta_kubernetes_pod_name]
-                    action: replace
-                    target_label: pod
+          discovery.kubernetes "pods" {
+            role = "pod"
+          }
 
-    persistence:
-      enabled: true
-      existingClaim: alloy-data
-      mountPath: /var/lib/grafana-agent
+          discovery.relabel "pod_logs" {
+            targets = discovery.kubernetes.pods.targets
 
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-      limits:
-        cpu: 500m
-        memory: 512Mi
+            rule {
+              source_labels = ["__meta_kubernetes_pod_node_name"]
+              action        = "keep"
+              regex         = env("HOST_NODE_NAME")
+            }
 
-    serviceAccount:
-      create: true
-      annotations: {}
+            rule {
+              source_labels = ["__meta_kubernetes_pod_name", "__meta_kubernetes_namespace", "__meta_kubernetes_pod_container_name"]
+              regex         = "(.+);(.+);(.+)"
+              target_label  = "__path__"
+              replacement   = "/var/log/containers/${1}_${2}_${3}-*.log"
+            }
 
-    securityContext:
-      runAsNonRoot: true
-      runAsUser: 1000
-      fsGroup: 1000
+            rule {
+              source_labels = ["__meta_kubernetes_namespace"]
+              action = "replace"
+              target_label = "namespace"
+            }
 
-    podSecurityContext:
-      fsGroup: 1000
+            rule {
+              source_labels = ["__meta_kubernetes_pod_name"]
+              action = "replace"
+              target_label = "pod"
+            }
 
-    nodeSelector: {}
+            rule {
+              source_labels = ["__meta_kubernetes_pod_container_name"]
+              action = "replace"
+              target_label = "container"
+            }
 
-    tolerations: []
+            rule {
+              source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+              action = "replace"
+              target_label = "app"
+            }
 
-    affinity: {}
+            rule {
+              source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_container_name"]
+              action = "replace"
+              target_label = "job"
+              separator = "/"
+              replacement = "$1"
+            }
 
+            rule {
+              source_labels = ["__meta_kubernetes_pod_node_name"]
+              target_label  = "node"
+              action        = "replace"
+            }
+          }
+
+          loki.source.kubernetes "pod_logs" {
+            targets    = discovery.relabel.pod_logs.output
+            forward_to = [loki.write.default.receiver]
+          }
+                    
+          loki.source.kubernetes_events "default" {
+            log_format = "logfmt"
+            forward_to = [loki.write.default.receiver]
+          }
+
+      mounts:
+        varlog: true
+        dockercontainers: false
+
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi

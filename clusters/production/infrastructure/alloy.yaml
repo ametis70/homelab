@@ -10,7 +10,15 @@ spec:
   timeout: 5m
   path: ./infrastructure/alloy
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: flux-system
-
+  dependsOn:
+    - name: cluster-secrets
+    - name: infrastructure-traefik
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: ingress-secrets-system
+        optional: false
