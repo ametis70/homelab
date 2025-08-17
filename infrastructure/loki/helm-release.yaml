@@ -18,9 +18,11 @@ spec:
   values:
     deploymentMode: SingleBinary
 
-    global:
+    singleBinary:
+      # Ensure Loki expands env vars in its config
       extraArgs:
         - -config.expand-env=true
+      # Inject S3 credentials into the pod environment
       extraEnvFrom:
         - secretRef:
             name: loki-objstore-secrets
@@ -82,4 +84,3 @@ spec:
 
     podSecurityContext:
       fsGroup: 1000
-
