@@ -17,11 +17,6 @@ spec:
       version: 1.2.1
   values:
     alloy:
-      env:
-        - name: HOST_NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
       configMap:
         create: true
         content: |-
@@ -41,16 +36,14 @@ spec:
 
           discovery.kubernetes "pods" {
             role = "pod"
+            selectors {
+              role =  "pod"
+              field = "spec.nodeName=" + coalesce(env("HOSTNAME"), constants.hostname)
+            }
           }
 
           discovery.relabel "pod_logs" {
             targets = discovery.kubernetes.pods.targets
-
-            rule {
-              source_labels = ["__meta_kubernetes_pod_node_name"]
-              action        = "keep"
-              regex         = env("HOST_NODE_NAME")
-            }
 
             rule {
               source_labels = ["__meta_kubernetes_pod_name", "__meta_kubernetes_namespace", "__meta_kubernetes_pod_container_name"]
@@ -102,10 +95,11 @@ spec:
             targets    = discovery.relabel.pod_logs.output
             forward_to = [loki.write.default.receiver]
           }
-                    
+
           loki.source.kubernetes_events "default" {
-            log_format = "logfmt"
+            log_format = "json"
             forward_to = [loki.write.default.receiver]
+            job_name = "kubernetes"
           }
 
       mounts:
