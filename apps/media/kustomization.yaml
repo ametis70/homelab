@@ -6,6 +6,7 @@ resources:
   - qbittorrent/
   - sonarr/
   - radarr/
+  - lidarr/
   - prowlarr/
   - bazarr/
   - jellyfin/
@@ -13,4 +14,3 @@ resources:
   - flaresolverr/
   - cleanuparr/
   - huntarr/
-
