@@ -1,0 +1,75 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  namespace: media
+  name: filebrowser
+spec:
+  interval: 24h0m0s
+  chart:
+    spec:
+      chart: app-template
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      version: 4.2.0
+  values:
+    controllers:
+      filebrowser:
+        pod:
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568
+            runAsNonRoot: true
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+        containers:
+          app:
+            image:
+              repository: docker.io/filebrowser/filebrowser
+              tag: v2.42.5@sha256:8c9aefde747d181f024c9d7f16c363603a4f2b966518217c02354c07c47df25e
+            env:
+              TZ: "America/Argentina/Buenos_Aires"
+              FB_ROOT: "/data"
+              FB_DATABASE: "/config/filebrowser.db"
+              FB_NOAUTH: "true"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 80
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+    service:
+      app:
+        controller: filebrowser
+        ports:
+          http:
+            port: *port
+    persistence:
+      config:
+        existingClaim: filebrowser-config
+        globalMounts:
+          - path: /config
+      downloads:
+        existingClaim: media-downloads-pvc
+        globalMounts:
+          - path: /data/downloads
+      tv:
+        existingClaim: media-tv-pvc
+        globalMounts:
+          - path: /data/tv
+      movies:
+        existingClaim: media-movies-pvc
+        globalMounts:
+          - path: /data/movies
+      music:
+        existingClaim: media-music-pvc
+        globalMounts:
+          - path: /data/music
