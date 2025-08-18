@@ -1,0 +1,13 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: navidrome
+  namespace: media
+spec:
+  routes:
+    - match: Host(`navidrome.${TLD}`)
+      priority: 10
+      services:
+        - name: navidrome
+          port: 4533
+
