@@ -26,6 +26,7 @@ spec:
               PUID: 568
               PGID: 568
               DEEMIX_MUSIC_DIR: "/downloads/deemix"
+              DISABLE_OWNERSHIP_CHECK: true
             probes:
               liveness: &probes
                 enabled: true
