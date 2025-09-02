@@ -29,7 +29,7 @@ spec:
               DISABLE_OWNERSHIP_CHECK: true
             probes:
               liveness: &probes
-                enabled: true
+                enabled: false
                 custom: true
                 spec:
                   httpGet:
