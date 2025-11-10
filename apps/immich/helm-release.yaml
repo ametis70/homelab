@@ -11,28 +11,28 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: immich
-      version: 0.9.3
+      version: 0.10.1
   valuesFrom:
     - kind: Secret
       name: pg-secrets
       valuesKey: password
-      targetPath: env.DB_PASSWORD
+      targetPath: controllers.main.containers.main.env.DB_PASSWORD
     - kind: Secret
       name: pg-secrets
       valuesKey: username
-      targetPath: env.DB_USERNAME
+      targetPath: controllers.main.containers.main.env.DB_USERNAME
   values:
-    image:
-      tag: v1.136.0
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              tag: v2.2.3
+            env:
+              DB_HOSTNAME: immich-postgres-rw
+              DB_DATABASE_NAME: immich
 
-    env:
-      DB_HOSTNAME: immich-postgres-rw
-      DB_DATABASE_NAME: immich
-
-    postgresql:
-      enabled: false
-
-    redis:
+    valkey:
       enabled: true
 
     immich:
@@ -47,6 +47,6 @@ spec:
       persistence:
         cache:
           enabled: true
-          type: pvc
+          type: persistentVolumeClaim
           storageClass: longhorn
           size: 10Gi
