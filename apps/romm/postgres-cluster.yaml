@@ -1,0 +1,27 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: romm-postgres
+  namespace: romm
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.5
+  primaryUpdateStrategy: unsupervised
+
+  storage:
+    size: 5Gi
+    storageClass: longhorn
+
+  managed:
+    roles:
+      - name: romm
+        superuser: true
+        login: true
+
+  bootstrap:
+    initdb:
+      database: romm
+      owner: romm
+      secret:
+        name: pg-secrets
+      dataChecksums: true

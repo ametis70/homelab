@@ -6,5 +6,5 @@ resources:
   - media.yaml
   - home-assistant.yaml
   - outline.yaml
+  - romm.yaml
   # - whatsmyip.yaml
-

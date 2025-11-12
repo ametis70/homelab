@@ -1,0 +1,15 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: romm-ingress
+  namespace: romm
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: "Host(`romm.${TLD}`)"
+      priority: 10
+      services:
+        - name: romm
+          port: 8080
