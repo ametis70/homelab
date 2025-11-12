@@ -6,6 +6,7 @@ resources:
   - pg-secrets.yaml
   - auth-secrets.yaml
   - romm-secrets.yaml
+  - external-secrets.yaml
   - postgres-cluster.yaml
   - redis-helm-release.yaml
   - helm-release.yaml

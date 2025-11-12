@@ -34,6 +34,26 @@ spec:
       name: romm-secrets
       valuesKey: secret_key
       targetPath: controllers.romm.containers.app.env.ROMM_AUTH_SECRET_KEY
+    - kind: Secret
+      name: external-secrets
+      valuesKey: igdb_client
+      targetPath: controllers.romm.containers.app.env.IGDB_CLIENT_ID
+    - kind: Secret
+      name: external-secrets
+      valuesKey: igdb_secret
+      targetPath: controllers.romm.containers.app.env.IGDB_CLIENT_SECRET
+    - kind: Secret
+      name: external-secrets
+      valuesKey: screenscraper_username
+      targetPath: controllers.romm.containers.app.env.SCREENSCRAPER_USER
+    - kind: Secret
+      name: external-secrets
+      valuesKey: screenscraper_password
+      targetPath: controllers.romm.containers.app.env.SCREENSCRAPER_PASSWORD
+    - kind: Secret
+      name: external-secrets
+      valuesKey: steamgriddb_key
+      targetPath: controllers.romm.containers.app.env.STEAMGRIDDB_API_KEY
 
   values:
     controllers:
