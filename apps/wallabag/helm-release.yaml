@@ -1,0 +1,91 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: wallabag
+  namespace: wallabag
+spec:
+  interval: 24h0m0s
+  chart:
+    spec:
+      chart: app-template
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      version: 4.2.0
+  valuesFrom:
+    - kind: Secret
+      name: pg-secrets
+      valuesKey: username
+      targetPath: controllers.wallabag.containers.app.env.SYMFONY__ENV__DATABASE_USER
+    - kind: Secret
+      name: pg-secrets
+      valuesKey: password
+      targetPath: controllers.wallabag.containers.app.env.SYMFONY__ENV__DATABASE_PASSWORD
+    - kind: Secret
+      name: wallabag-secrets
+      valuesKey: app_secret
+      targetPath: controllers.wallabag.containers.app.env.SYMFONY__ENV__SECRET
+    - kind: Secret
+      name: mail-secrets
+      valuesKey: mailer_dsn
+      targetPath: controllers.wallabag.containers.app.env.SYMFONY__ENV__MAILER_DSN
+
+  values:
+    controllers:
+      wallabag:
+        containers:
+          app:
+            image:
+              repository: wallabag/wallabag
+              tag: 2.6.14
+            env:
+              SYMFONY__ENV__DOMAIN_NAME: https://wallabag.${TLD}
+              SYMFONY__ENV__SERVER_NAME: Wallabag
+              SYMFONY__ENV__DATABASE_DRIVER: pdo_pgsql
+              SYMFONY__ENV__DATABASE_HOST: wallabag-postgres-rw
+              SYMFONY__ENV__DATABASE_PORT: "5432"
+              SYMFONY__ENV__DATABASE_NAME: wallabag
+              SYMFONY__ENV__DATABASE_CHARSET: utf8
+              SYMFONY__ENV__FOSUSER_REGISTRATION: "false"
+              SYMFONY__ENV__FOSUSER_CONFIRMATION: "true"
+              SYMFONY__ENV__LOCALE: en
+              SYMFONY__ENV__REDIS_HOST: wallabag-redis-master
+              SYMFONY__ENV__REDIS_PORT: "6379"
+              SYMFONY__ENV__FROM_EMAIL: wallabag@${TLD}
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+            probes:
+              liveness: &probes
+                enabled: false
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 80
+                  initialDelaySeconds: 60
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *probes
+    service:
+      app:
+        controller: wallabag
+        type: ClusterIP
+        ports:
+          http:
+            port: *port
+    persistence:
+      data:
+        existingClaim: wallabag-data
+        globalMounts:
+          - path: /var/www/wallabag/data
+      images:
+        existingClaim: wallabag-images
+        globalMounts:
+          - path: /var/www/wallabag/web/assets/images
