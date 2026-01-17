@@ -26,7 +26,7 @@ spec:
       type: LoadBalancer
       externalTrafficPolicy: Local
       annotations:
-        kube-vip.io/loadbalancerIPs: 192.168.88.101
+        kube-vip.io/loadbalancerIPs: 10.0.30.101
     # Configure persistent volume claims
     persistent_volume_claims:
       mail-config:

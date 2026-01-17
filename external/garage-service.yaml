@@ -28,7 +28,7 @@ metadata:
   namespace: traefik
 subsets:
   - addresses:
-      - ip: 192.168.88.60
+      - ip: 10.0.30.40
     ports:
       - name: ui
         port: 30186
