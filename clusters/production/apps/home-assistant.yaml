@@ -18,6 +18,7 @@ spec:
     - name: cluster-secrets
     - name: infrastructure-traefik
     - name: infrastructure-longhorn
+    - name: infrastructure-multus-cni
   postBuild:
     substituteFrom:
       - kind: Secret

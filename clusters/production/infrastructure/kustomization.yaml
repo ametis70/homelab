@@ -19,3 +19,4 @@ resources:
   - thanos.yaml
   - alloy.yaml
   - loki.yaml
+  - multus-cni.yaml

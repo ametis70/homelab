@@ -17,6 +17,8 @@ spec:
     controllers:
       home-assistant:
         pod:
+          annotations:
+            k8s.v1.cni.cncf.io/networks: iot-vlan20
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
@@ -34,6 +36,11 @@ spec:
               privileged: false
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
+              capabilities:
+                add:
+                  - NET_ADMIN
+                  - NET_RAW
+                  - NET_BROADCAST
             resources:
               requests:
                 cpu: 100m
