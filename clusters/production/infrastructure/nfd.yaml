@@ -12,6 +12,6 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./infrastructure/nfd
-  prune: true
+  prune: false
   wait: true
 
