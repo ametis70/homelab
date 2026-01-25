@@ -8,7 +8,7 @@ spec:
   retryInterval: 1m
   timeout: 5m
   wait: true
-  path: ./shared/helm
+  path: ./infrastructure/helm-charts
   prune: false
   sourceRef:
     kind: GitRepository
