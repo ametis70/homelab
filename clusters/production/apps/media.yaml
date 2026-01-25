@@ -16,7 +16,7 @@ spec:
   wait: true
   dependsOn:
     - name: cluster-secrets
-    - name: infrastructure-traefik
+    - name: traefik
   postBuild:
     substituteFrom:
       - kind: Secret

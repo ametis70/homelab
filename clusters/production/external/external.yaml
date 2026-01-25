@@ -15,7 +15,7 @@ spec:
     name: flux-system
   dependsOn:
     - name: cluster-secrets
-    - name: infrastructure-sealed-secrets
+    - name: sealed-secrets
   postBuild:
     substituteFrom:
       - kind: Secret

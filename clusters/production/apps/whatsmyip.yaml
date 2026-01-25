@@ -15,7 +15,7 @@ spec:
   prune: true
   wait: true
   dependsOn:
-    - name: infrastructure-traefik
+    - name: traefik
   postBuild:
     substituteFrom:
       - kind: Secret

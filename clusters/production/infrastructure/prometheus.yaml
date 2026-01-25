@@ -2,7 +2,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: infrastructure-prometheus
+  name: prometheus
   namespace: flux-system
 spec:
   interval: 24h
@@ -16,8 +16,8 @@ spec:
   wait: true
   dependsOn:
     - name: cluster-secrets
-    - name: infrastructure-longhorn
-    - name: infrastructure-grafana
+    - name: longhorn
+    - name: grafana
   postBuild:
     substituteFrom:
       - kind: Secret

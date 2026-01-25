@@ -16,8 +16,8 @@ spec:
   wait: true
   dependsOn:
     - name: cluster-secrets
-    - name: infrastructure-traefik
-    - name: infrastructure-cloudnative-pg-operator
+    - name: traefik
+    - name: cloudnative-pg-operator
   postBuild:
     substituteFrom:
       - kind: Secret

@@ -2,7 +2,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: infrastructure-longhorn
+  name: longhorn
   namespace: flux-system
 spec:
   interval: 24h
