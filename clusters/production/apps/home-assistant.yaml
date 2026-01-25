@@ -2,33 +2,6 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: apps-home-assistant
-  namespace: flux-system
-spec:
-  interval: 24h
-  retryInterval: 2m
-  timeout: 8m
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  path: ./apps/home-assistant
-  prune: false
-  wait: true
-  dependsOn:
-    - name: cluster-secrets
-    - name: infrastructure-traefik
-    - name: infrastructure-longhorn
-    - name: infrastructure-multus-cni
-  postBuild:
-    substituteFrom:
-      - kind: Secret
-        name: ingress-secrets-system
-        optional: false
-
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
   name: home-assistant  # ← New name without prefix
   namespace: flux-system
 spec:
