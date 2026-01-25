@@ -8,6 +8,7 @@ resources:
   - traefik.yaml
   - longhorn.yaml
   - cloudflare-ddns.yaml
+  - flux-web-ui.yaml
   - docker-mailserver.yaml
   - authentik.yaml
   - cloudnative-pg.yaml
