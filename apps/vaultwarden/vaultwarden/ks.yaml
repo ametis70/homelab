@@ -2,26 +2,26 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: home-assistant  # ← New name without prefix
-  namespace: flux-system
+  name: vaultwarden
 spec:
   interval: 24h
-  retryInterval: 2m
-  timeout: 8m
+  retryInterval: 1m
+  timeout: 5m
+  path: ./apps/vaultwarden/vaultwarden/resources
+  prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./apps/home-assistant
-  prune: true  # ← Enable pruning on the new one
-  wait: true
+    namespace: flux-system
+  targetNamespace: vaultwarden
   dependsOn:
     - name: cluster-secrets
     - name: traefik
-    - name: longhorn
-    - name: multus-cni
   postBuild:
     substituteFrom:
       - kind: Secret
+        name: vaultwarden-secrets-system
+        optional: false
+      - kind: Secret
         name: ingress-secrets-system
         optional: false
-

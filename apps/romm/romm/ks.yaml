@@ -2,18 +2,18 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: outline
-  namespace: flux-system
+  name: romm
 spec:
   interval: 24h
   retryInterval: 2m
   timeout: 8m
+  path: ./apps/romm/romm/resources
+  prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./apps/outline
-  prune: true
-  wait: true
+    namespace: flux-system
+  targetNamespace: romm
   dependsOn:
     - name: cluster-secrets
     - name: traefik
@@ -24,4 +24,3 @@ spec:
       - kind: Secret
         name: ingress-secrets-system
         optional: false
-

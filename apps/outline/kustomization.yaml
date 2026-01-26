@@ -1,12 +1,10 @@
+---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources:
-  - namespace.yaml
-  - pg-secrets.yaml
-  - auth-secrets.yaml
-  - mail-secrets.yaml
-  - postgres-cluster.yaml
-  - pvc.yaml
-  - helm-release.yaml
-  - ingressroute.yaml
+namespace: outline
 
+components:
+  - ../../components/namespace
+
+resources:
+  - ./outline/ks.yaml

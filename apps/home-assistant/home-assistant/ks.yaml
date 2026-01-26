@@ -2,22 +2,23 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: immich
-  namespace: flux-system
+  name: home-assistant
 spec:
   interval: 24h
   retryInterval: 2m
   timeout: 8m
+  path: ./apps/home-assistant/home-assistant/resources
+  prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./apps/immich
-  prune: true
-  wait: true
+    namespace: flux-system
+  targetNamespace: home-assistant
   dependsOn:
     - name: cluster-secrets
     - name: traefik
-    - name: cloudnative-pg-operator
+    - name: longhorn
+    - name: multus-cni
   postBuild:
     substituteFrom:
       - kind: Secret

@@ -2,22 +2,21 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: romm
-  namespace: flux-system
+  name: immich
 spec:
   interval: 24h
   retryInterval: 2m
   timeout: 8m
+  path: ./apps/immich/immich/resources
+  prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./apps/romm
-  prune: true
-  wait: true
+    namespace: flux-system
+  targetNamespace: immich
   dependsOn:
     - name: cluster-secrets
     - name: traefik
-    - name: longhorn
     - name: cloudnative-pg-operator
   postBuild:
     substituteFrom:
