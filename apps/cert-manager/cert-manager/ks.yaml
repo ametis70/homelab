@@ -3,7 +3,6 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: cert-manager
-  namespace: flux-system
 spec:
   interval: 24h
   retryInterval: 30s
@@ -11,11 +10,14 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
+    namespace: flux-system
   path: ./apps/cert-manager/cert-manager/resources
   prune: false
   wait: true
+  targetNamespace: cert-manager
   dependsOn:
     - name: cluster-secrets
+      namespace: flux-system
   postBuild:
     substitute:
       quote: '"'

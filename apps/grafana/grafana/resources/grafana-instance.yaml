@@ -87,12 +87,3 @@ spec:
               volumeMounts:
                 - name: grafana-dashboards
                   mountPath: /tmp/dashboards
-  
-  persistentVolumeClaim:
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 2Gi
-      storageClassName: longhorn

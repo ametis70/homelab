@@ -7,12 +7,39 @@ metadata:
 spec:
   interval: 24h
   retryInterval: 30s
-  timeout: 3m
+  timeout: 5m
   sourceRef:
     kind: GitRepository
     name: flux-system
+    namespace: flux-system
   path: ./apps/cluster-secrets/cluster-secrets/resources
   prune: false
-  wait: true
+  wait: false
+  healthChecks:
+    - apiVersion: v1
+      kind: Secret
+      name: cert-manager-secrets-system
+      namespace: flux-system
+    - apiVersion: v1
+      kind: Secret
+      name: ingress-secrets-system
+      namespace: flux-system
+    - apiVersion: v1
+      kind: Secret
+      name: cloudflare-ddns-secrets-system
+      namespace: flux-system
+    - apiVersion: v1
+      kind: Secret
+      name: authentik-secrets-system
+      namespace: flux-system
+    - apiVersion: v1
+      kind: Secret
+      name: vaultwarden-secrets-system
+      namespace: flux-system
+    - apiVersion: v1
+      kind: Secret
+      name: docker-mailserver-secrets-system
+      namespace: flux-system
   dependsOn:
     - name: sealed-secrets
+      namespace: flux-system

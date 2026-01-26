@@ -2,4 +2,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - repositories.yaml
+  - bjw-s.yaml
+  - community-charts.yaml
+  - bitnami.yaml
+  - grafana.yaml
+  - intel-device-plugins.yaml

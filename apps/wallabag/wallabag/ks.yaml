@@ -16,9 +16,13 @@ spec:
   targetNamespace: wallabag
   dependsOn:
     - name: cluster-secrets
+      namespace: flux-system
     - name: traefik
+      namespace: traefik
     - name: longhorn
+      namespace: longhorn
     - name: cloudnative-pg-operator
+      namespace: cloudnative-pg
   postBuild:
     substituteFrom:
       - kind: Secret

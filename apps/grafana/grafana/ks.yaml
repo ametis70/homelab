@@ -11,12 +11,15 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
+    namespace: flux-system
   path: ./apps/grafana/grafana/resources
   prune: false
   wait: true
   dependsOn:
     - name: cluster-secrets
+      namespace: flux-system
     - name: traefik
+      namespace: traefik
   postBuild:
     substituteFrom:
       - kind: Secret

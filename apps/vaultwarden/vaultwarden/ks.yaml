@@ -16,7 +16,9 @@ spec:
   targetNamespace: vaultwarden
   dependsOn:
     - name: cluster-secrets
+      namespace: flux-system
     - name: traefik
+      namespace: traefik
   postBuild:
     substituteFrom:
       - kind: Secret

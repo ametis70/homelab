@@ -8,18 +8,18 @@ components:
 
 resources:
   - pvc.yaml
-  - qbittorrent/
-  - sonarr/
-  - radarr/
-  - filebrowser/
-  - prowlarr/
-  - bazarr/
-  - jellyfin/
-  - jellyseerr/
-  - flaresolverr/
-  - cleanuparr/
-  - huntarr/
-  - lidarr/
-  - deemix/
-  - navidrome/
-  - beets/
+  - qbittorrent/ks.yaml
+  - sonarr/ks.yaml
+  - radarr/ks.yaml
+  - filebrowser/ks.yaml
+  - prowlarr/ks.yaml
+  - bazarr/ks.yaml
+  - jellyfin/ks.yaml
+  - jellyseerr/ks.yaml
+  - flaresolverr/ks.yaml
+  - cleanuparr/ks.yaml
+  - huntarr/ks.yaml
+  - lidarr/ks.yaml
+  - deemix/ks.yaml
+  - navidrome/ks.yaml
+  - beets/ks.yaml

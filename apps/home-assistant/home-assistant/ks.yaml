@@ -16,9 +16,13 @@ spec:
   targetNamespace: home-assistant
   dependsOn:
     - name: cluster-secrets
+      namespace: flux-system
     - name: traefik
+      namespace: traefik
     - name: longhorn
+      namespace: longhorn
     - name: multus-cni
+      namespace: multus-cni
   postBuild:
     substituteFrom:
       - kind: Secret

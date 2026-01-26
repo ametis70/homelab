@@ -16,8 +16,11 @@ spec:
   targetNamespace: immich
   dependsOn:
     - name: cluster-secrets
+      namespace: flux-system
     - name: traefik
+      namespace: traefik
     - name: cloudnative-pg-operator
+      namespace: cloudnative-pg
   postBuild:
     substituteFrom:
       - kind: Secret

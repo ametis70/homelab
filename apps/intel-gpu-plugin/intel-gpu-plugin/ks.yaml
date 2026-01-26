@@ -11,10 +11,14 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
+    namespace: flux-system
   path: ./apps/intel-gpu-plugin/intel-gpu-plugin/resources
   prune: false
   wait: true
+  targetNamespace: intel-gpu-plugin
   dependsOn:
     - name: nfd
+      namespace: nfd
     - name: cert-manager
+      namespace: cert-manager
 
