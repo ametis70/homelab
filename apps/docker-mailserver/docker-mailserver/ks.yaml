@@ -1,0 +1,25 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: docker-mailserver
+  namespace: flux-system
+spec:
+  interval: 24h
+  retryInterval: 1m
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./apps/docker-mailserver/docker-mailserver/resources
+  prune: false
+  wait: true
+  dependsOn:
+    - name: cluster-secrets
+    - name: cert-manager
+    - name: traefik
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: docker-mailserver-secrets-system
+        optional: false

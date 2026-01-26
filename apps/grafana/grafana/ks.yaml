@@ -1,0 +1,24 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: grafana
+  namespace: flux-system
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 10m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./apps/grafana/grafana/resources
+  prune: false
+  wait: true
+  dependsOn:
+    - name: cluster-secrets
+    - name: traefik
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: ingress-secrets-system
+        optional: false

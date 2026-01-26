@@ -1,0 +1,10 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: intel-gpu-plugin
+
+components:
+  - ../../components/namespace
+
+resources:
+  - ./intel-gpu-plugin/ks.yaml
