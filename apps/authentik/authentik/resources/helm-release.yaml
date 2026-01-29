@@ -27,7 +27,7 @@ spec:
       error_reporting:
         enabled: true
       email:
-        host: "${MAIL_DOMAIN}"
+        host: "mail.${TLD}"
         port: 465
         username: "${MAIL_USERNAME}"
         use_tls: false
