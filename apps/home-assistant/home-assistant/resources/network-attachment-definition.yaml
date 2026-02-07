@@ -10,5 +10,10 @@ spec:
       "type": "macvlan",
       "master": "vlan20",
       "mode": "bridge",
-      "ipam": { "type": "dhcp" }
+      "ipam": {
+        "type": "static",
+        "addresses": [
+          { "address": "10.0.20.10/24" }
+        ]
+      }
     }
