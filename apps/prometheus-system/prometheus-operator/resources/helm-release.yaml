@@ -45,12 +45,6 @@ spec:
           limits:
             memory: 1Gi
             cpu: 500m
-        thanos:
-          objectStorageConfig:
-            existingSecret:
-              name: thanos-objstore-secrets
-              key: objstore.yml
-          sidecar: true
 
     # Alertmanager configuration
     alertmanager:
