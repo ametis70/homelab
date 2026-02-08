@@ -19,8 +19,8 @@ spec:
       enabled: false
     deployment:
       env:
-        OVERRIDE_HOSTNAME: ${DOMAIN}
-        POSTMASTER_ADDRESS: ${POSTMASTER_ADDRESS}
+        OVERRIDE_HOSTNAME: mail.${TLD}
+        POSTMASTER_ADDRESS: postmaster@${TLD}
         ENABLE_FAIL2BAN: 1
     service:
       type: LoadBalancer

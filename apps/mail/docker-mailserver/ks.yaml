@@ -26,5 +26,5 @@ spec:
   postBuild:
     substituteFrom:
       - kind: Secret
-        name: docker-mailserver-secrets-system
+        name: ingress-secrets-system
         optional: false
