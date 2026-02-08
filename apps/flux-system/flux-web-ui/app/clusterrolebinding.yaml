@@ -1,10 +1,23 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: flux-admin
+  name: flux-admin-group
 subjects:
   - kind: Group
     name: flux-admin
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: flux-web-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: flux-admin-user
+subjects:
+  - kind: User
+    name: flux-operator
     apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole
