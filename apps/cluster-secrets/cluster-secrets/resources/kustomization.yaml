@@ -5,5 +5,4 @@ resources:
   - ingress-secrets-system.yaml
   - cert-manager-secrets-system.yaml
   - cloudflare-ddns-secrets-system.yaml
-  - authentik-secrets-system.yaml
   - vaultwarden-secrets-system.yaml

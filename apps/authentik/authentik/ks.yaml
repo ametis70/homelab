@@ -23,8 +23,5 @@ spec:
   postBuild:
     substituteFrom:
       - kind: Secret
-        name: authentik-secrets-system
-        optional: false
-      - kind: Secret
         name: ingress-secrets-system
         optional: false

@@ -29,11 +29,11 @@ spec:
       email:
         host: "mail.${TLD}"
         port: 465
-        username: "${MAIL_USERNAME}"
+        username: "authentik@${TLD}"
         use_tls: false
         use_ssl: true
         timeout: 30
-        from: "Authentik <${MAIL_USERNAME}>"
+        from: "Authentik <authentik@${TLD}>"
 
     server:
       ingress:
