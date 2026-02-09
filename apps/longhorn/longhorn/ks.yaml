@@ -16,8 +16,8 @@ spec:
   prune: false
   wait: true
   dependsOn:
-    - name: cluster-secrets
-      namespace: flux-system
+    - name: external-secrets-cluster
+      namespace: external-secrets
   postBuild:
     substituteFrom:
       - kind: Secret

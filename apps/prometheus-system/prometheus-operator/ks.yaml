@@ -17,8 +17,8 @@ spec:
   wait: true
   targetNamespace: prometheus-system
   dependsOn:
-    - name: cluster-secrets
-      namespace: flux-system
+    - name: external-secrets-cluster
+      namespace: external-secrets
     - name: longhorn
       namespace: longhorn
     - name: grafana

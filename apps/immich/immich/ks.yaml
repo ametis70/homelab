@@ -15,8 +15,8 @@ spec:
     namespace: flux-system
   targetNamespace: immich
   dependsOn:
-    - name: cluster-secrets
-      namespace: flux-system
+    - name: external-secrets-cluster
+      namespace: external-secrets
     - name: traefik
       namespace: traefik
     - name: cloudnative-pg-operator

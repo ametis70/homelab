@@ -15,10 +15,8 @@ spec:
     name: flux-system
     namespace: flux-system
   dependsOn:
-    - name: cluster-secrets
-      namespace: flux-system
-    - name: sealed-secrets
-      namespace: flux-system
+    - name: external-secrets-cluster
+      namespace: external-secrets
   postBuild:
     substituteFrom:
       - kind: Secret
