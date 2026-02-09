@@ -16,10 +16,5 @@ spec:
   prune: false
   wait: true
   dependsOn:
-    - name: cluster-secrets
-      namespace: flux-system
-  postBuild:
-    substituteFrom:
-      - kind: Secret
-        name: cloudflare-ddns-secrets-system
-        optional: false
+    - name: external-secrets
+      namespace: external-secrets

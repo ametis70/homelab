@@ -14,20 +14,9 @@ spec:
         name: cloudflare-ddns
       version: v1.0.3
   interval: 24h0m0s
+  valuesFrom:
+    - kind: Secret
+      name: cloudflare-ddns-config
+      valuesKey: values.yaml
   values:
     externalSecret: cloudflare-ddns-secrets
-    config:
-      configJson: |
-        {
-          "ipv4_enabled": true,
-          "ipv6_enabled": false,
-          "ttl": 300,
-          "zones": [
-            {
-              "id": "${ZONE_ID}",
-              "name": "${DOMAIN}",
-              "update_root_domain": true,
-              "subdomains": [ "mail" ]
-            }
-          ]
-        }
