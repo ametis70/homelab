@@ -16,12 +16,15 @@ spec:
   wait: true
   targetNamespace: cert-manager
   dependsOn:
-    - name: cluster-secrets
-      namespace: flux-system
+    - name: external-secrets-cluster
+      namespace: external-secrets
   postBuild:
     substitute:
       quote: '"'
     substituteFrom:
       - kind: Secret
-        name: cert-manager-secrets-system
+        name: cluster-secrets
+        optional: false
+      - kind: Secret
+        name: cert-manager-substitution
         optional: false

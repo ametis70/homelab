@@ -3,6 +3,6 @@ kind: Kustomization
 resources:
   - helm-repository.yaml
   - helm-release.yaml
-  - cert-manager-secrets.yaml
+  - external-secret.yaml
   - cluster-issuer.yaml
   - wildcard-certificate.yaml

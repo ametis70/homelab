@@ -18,10 +18,6 @@ spec:
   healthChecks:
     - apiVersion: v1
       kind: Secret
-      name: cert-manager-secrets-system
-      namespace: flux-system
-    - apiVersion: v1
-      kind: Secret
       name: vaultwarden-secrets-system
       namespace: flux-system
     - apiVersion: v1

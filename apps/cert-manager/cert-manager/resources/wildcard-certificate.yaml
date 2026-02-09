@@ -5,7 +5,7 @@ metadata:
   namespace: default
 spec:
   dnsNames:
-    - ${quote}${DOMAIN}${quote}
+    - ${quote}*.${DOMAIN}${quote}
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-clusterissuer
