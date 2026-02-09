@@ -15,14 +15,14 @@ spec:
     namespace: flux-system
   targetNamespace: vaultwarden
   dependsOn:
-    - name: cluster-secrets
-      namespace: flux-system
+    - name: external-secrets-cluster
+      namespace: external-secrets
     - name: traefik
       namespace: traefik
   postBuild:
     substituteFrom:
       - kind: Secret
-        name: vaultwarden-secrets-system
+        name: vaultwarden-secrets
         optional: false
       - kind: Secret
         name: cluster-secrets

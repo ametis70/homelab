@@ -41,12 +41,12 @@ spec:
 
     smtp:
       host: mail.${DOMAIN}
-      from: ${MAIL_USER}
+      from: vaultwarden@${DOMAIN}
       fromName: "Vault Administrator"
       existingSecret: vaultwarden-secrets
       security: force_tls
       port: 465
       username:
-        existingSecretKey: MAIL_USERNAME
+        existingSecretKey: SMTP_USERNAME
       password:
-        existingSecretKey: MAIL_PASSWORD
+        existingSecretKey: SMTP_PASSWORD
