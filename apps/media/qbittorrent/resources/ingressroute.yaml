@@ -5,7 +5,7 @@ metadata:
   namespace: media
 spec:
   routes:
-    - match: Host(`qbittorrent.${TLD}`)
+    - match: Host(`qbittorrent.${DOMAIN}`)
       priority: 10
       middlewares:
         - name: authentik

@@ -5,7 +5,7 @@ metadata:
   namespace: traefik
 spec:
   routes:
-    - match: Host(`traefik.${TLD}`)
+    - match: Host(`traefik.${DOMAIN}`)
       kind: Rule
       services:
         - name: api@internal

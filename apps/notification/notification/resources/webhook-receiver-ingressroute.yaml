@@ -8,7 +8,7 @@
 #   entryPoints:
 #     - websecure
 #   routes:
-#     - match: Host(`fluxcd.${TLD}`) && PathPrefix(`/hook/`)
+#     - match: Host(`fluxcd.${DOMAIN}`) && PathPrefix(`/hook/`)
 #       kind: Rule
 #       services:
 #         - name: webhook-receiver
@@ -22,7 +22,7 @@ metadata:
   namespace: flux-system
 spec:
   rules:
-    - host: fluxcd.${TLD}
+    - host: fluxcd.${DOMAIN}
       http:
         paths:
           - pathType: Prefix

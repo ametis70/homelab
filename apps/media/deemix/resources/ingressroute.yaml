@@ -5,7 +5,7 @@ metadata:
   namespace: media
 spec:
   routes:
-    - match: Host(`deemix.${TLD}`)
+    - match: Host(`deemix.${DOMAIN}`)
       priority: 10
       middlewares:
         - name: authentik

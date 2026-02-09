@@ -5,7 +5,7 @@ metadata:
   namespace: traefik
 spec:
   routes:
-    - match: Host(`nas.${TLD}`)
+    - match: Host(`nas.${DOMAIN}`)
       priority: 10
       services:
         - name: external-nas

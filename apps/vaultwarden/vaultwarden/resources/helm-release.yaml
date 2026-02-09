@@ -16,7 +16,7 @@ spec:
   interval: 24h0m0s
   values:
     timeZone: "America/Argentina/Buenos_Aires"
-    domain: "https://vw.${TLD}"
+    domain: "https://vw.${DOMAIN}"
     signupsAllowed: false
 
     storage:

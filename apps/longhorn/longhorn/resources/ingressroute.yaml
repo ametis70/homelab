@@ -5,7 +5,7 @@ metadata:
   namespace: longhorn-system
 spec:
   routes:
-    - match: Host(`longhorn.${TLD}`)
+    - match: Host(`longhorn.${DOMAIN}`)
       priority: 10
       middlewares:
         - name: authentik

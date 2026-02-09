@@ -5,7 +5,7 @@ metadata:
   namespace: media
 spec:
   routes:
-    - match: Host(`jellyseerr.${TLD}`)
+    - match: Host(`jellyseerr.${DOMAIN}`)
       priority: 10
       services:
         - name: jellyseerr

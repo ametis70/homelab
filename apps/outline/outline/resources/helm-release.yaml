@@ -25,7 +25,7 @@ spec:
 
   values:
     replicaCount: 1
-    url: https://outline.${TLD}
+    url: https://outline.${DOMAIN}
 
     redis:
       enabled: true
@@ -57,10 +57,10 @@ spec:
       FILE_STORAGE_LOCAL_ROOT_DIR: /var/lib/outline/data
 
     smtp:
-      host: mail.${TLD}
+      host: mail.${DOMAIN}
       port: 465
-      fromEmail: outline@${TLD}
-      replyEmail: no-reply@${TLD}
+      fromEmail: outline@${DOMAIN}
+      replyEmail: no-reply@${DOMAIN}
       secure: true
       existingSecret:
         name: mail-secrets
@@ -83,10 +83,10 @@ spec:
       oidc:
         enabled: true
         # clientId: secret
-        authUri: "https://authentik.${TLD}/application/o/authorize/"
-        tokenUri: "https://authentik.${TLD}/application/o/token/"
-        userInfoUri: "https://authentik.${TLD}/application/o/userinfo/"
-        logoutUri: "https://authentik.${TLD}/application/o/outline/end-session/"
+        authUri: "https://authentik.${DOMAIN}/application/o/authorize/"
+        tokenUri: "https://authentik.${DOMAIN}/application/o/token/"
+        userInfoUri: "https://authentik.${DOMAIN}/application/o/userinfo/"
+        logoutUri: "https://authentik.${DOMAIN}/application/o/outline/end-session/"
         usernameClaim: preferred_username
         displayName: "Authentik"
         scopes:

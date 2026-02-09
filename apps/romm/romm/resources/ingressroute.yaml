@@ -8,7 +8,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: "Host(`romm.${TLD}`)"
+      match: "Host(`romm.${DOMAIN}`)"
       priority: 10
       services:
         - name: romm

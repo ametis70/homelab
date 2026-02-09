@@ -5,7 +5,7 @@ metadata:
   namespace: media
 spec:
   routes:
-    - match: Host(`navidrome.${TLD}`)
+    - match: Host(`navidrome.${DOMAIN}`)
       priority: 10
       services:
         - name: navidrome

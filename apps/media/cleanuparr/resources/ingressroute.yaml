@@ -5,7 +5,7 @@ metadata:
   namespace: media
 spec:
   routes:
-    - match: Host(`cleanuparr.${TLD}`)
+    - match: Host(`cleanuparr.${DOMAIN}`)
       priority: 10
       middlewares:
         - name: authentik

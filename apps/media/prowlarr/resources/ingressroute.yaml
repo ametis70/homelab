@@ -5,7 +5,7 @@ metadata:
   namespace: media
 spec:
   routes:
-    - match: Host(`prowlarr.${TLD}`)
+    - match: Host(`prowlarr.${DOMAIN}`)
       priority: 10
       middlewares:
         - name: authentik

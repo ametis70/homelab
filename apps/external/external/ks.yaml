@@ -22,5 +22,5 @@ spec:
   postBuild:
     substituteFrom:
       - kind: Secret
-        name: ingress-secrets-system
+        name: cluster-secrets
         optional: false

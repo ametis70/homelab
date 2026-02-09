@@ -5,7 +5,7 @@ metadata:
   namespace: traefik
 spec:
   routes:
-    - match: Host(`garage.${TLD}`)
+    - match: Host(`garage.${DOMAIN}`)
       priority: 10
       services:
         - name: external-garage

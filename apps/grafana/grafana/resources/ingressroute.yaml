@@ -5,7 +5,7 @@ metadata:
   namespace: grafana
 spec:
   routes:
-    - match: Host(`grafana.${TLD}`)
+    - match: Host(`grafana.${DOMAIN}`)
       priority: 10
       services:
         - name: grafana-service

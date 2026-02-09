@@ -5,7 +5,7 @@ metadata:
   namespace: media
 spec:
   routes:
-    - match: Host(`jellyfin.${TLD}`)
+    - match: Host(`jellyfin.${DOMAIN}`)
       priority: 10
       services:
         - name: jellyfin

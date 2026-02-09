@@ -8,7 +8,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: "Host(`whatsmyip.${TLD}`)"
+      match: "Host(`whatsmyip.${DOMAIN}`)"
       priority: 10
       services:
         - name: whatsmyip

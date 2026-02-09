@@ -8,7 +8,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: "Host(`outline.${TLD}`)"
+      match: "Host(`outline.${DOMAIN}`)"
       priority: 10
       services:
         - name: outline

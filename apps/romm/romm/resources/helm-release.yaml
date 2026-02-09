@@ -66,7 +66,7 @@ spec:
             env:
               TZ: "America/Argentina/Buenos_Aires"
               LOGLEVEL: INFO
-              ROMM_BASE_URL: "https://romm.${TLD}"
+              ROMM_BASE_URL: "https://romm.${DOMAIN}"
               ROMM_BASE_PATH: /romm
               ROMM_PORT: "8080"
               DB_HOST: romm-postgres-rw
@@ -78,8 +78,8 @@ spec:
               REDIS_DB: "0"
               OIDC_ENABLED: "true"
               OIDC_PROVIDER: authentik
-              OIDC_REDIRECT_URI: "https://romm.${TLD}/api/oauth/openid"
-              OIDC_SERVER_APPLICATION_URL: "https://authentik.${TLD}/application/o/romm"
+              OIDC_REDIRECT_URI: "https://romm.${DOMAIN}/api/oauth/openid"
+              OIDC_SERVER_APPLICATION_URL: "https://authentik.${DOMAIN}/application/o/romm"
               HASHEOUS_API_ENABLED: "true"
             resources:
               requests:

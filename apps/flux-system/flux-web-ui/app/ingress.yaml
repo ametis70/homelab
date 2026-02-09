@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   routes:
-    - match: Host(`flux.${TLD}`)
+    - match: Host(`flux.${DOMAIN}`)
       priority: 10
       middlewares:
         - name: authentik

@@ -25,5 +25,5 @@ spec:
         name: vaultwarden-secrets-system
         optional: false
       - kind: Secret
-        name: ingress-secrets-system
+        name: cluster-secrets
         optional: false

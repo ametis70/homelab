@@ -44,7 +44,7 @@ spec:
               tag: 10.10.3
             env:
               TZ: "America/Argentina/Buenos_Aires"
-              JELLYFIN_PublishedServerUrl: "https://jellyfin.${TLD}"
+              JELLYFIN_PublishedServerUrl: "https://jellyfin.${DOMAIN}"
               # Intel GPU (iHD driver) configuration
               LIBVA_DRIVER_NAME: "iHD"
               INTEL_MEDIA_RUNTIME: "1"

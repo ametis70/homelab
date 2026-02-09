@@ -27,20 +27,20 @@ spec:
       error_reporting:
         enabled: true
       email:
-        host: "mail.${TLD}"
+        host: "mail.${DOMAIN}"
         port: 465
-        username: "authentik@${TLD}"
+        username: "authentik@${DOMAIN}"
         use_tls: false
         use_ssl: true
         timeout: 30
-        from: "Authentik <authentik@${TLD}>"
+        from: "Authentik <authentik@${DOMAIN}>"
 
     server:
       ingress:
         enabled: true
         ingressClassName: traefik
         hosts:
-          - "authentik.${TLD}"
+          - "authentik.${DOMAIN}"
 
     postgresql:
       enabled: true

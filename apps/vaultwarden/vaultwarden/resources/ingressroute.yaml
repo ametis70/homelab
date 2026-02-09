@@ -8,7 +8,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: "Host(`vw.${TLD}`)"
+      match: "Host(`vw.${DOMAIN}`)"
       priority: 10
       services:
         - name: vaultwarden
