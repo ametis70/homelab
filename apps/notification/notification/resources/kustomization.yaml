@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - webhook-receiver-ingressroute.yaml
   - github-receiver.yaml
-  - github-receiver-secrets.yaml
+  - external-secret.yaml
   - telegram-provider-alerts.yaml
   - telegram-provider.yaml
-  - telegram-provider-secrets.yaml
