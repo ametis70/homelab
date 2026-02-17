@@ -1,0 +1,17 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: snapshot-controller
+  namespace: kube-system
+spec:
+  interval: 24h
+  retryInterval: 1m
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  path: ./apps/snapshot-controller/snapshot-controller/resources
+  prune: false
+  wait: true

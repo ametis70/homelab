@@ -16,6 +16,8 @@ spec:
   prune: false
   wait: true
   dependsOn:
+    - name: snapshot-controller
+      namespace: kube-system
     - name: external-secrets-cluster
       namespace: external-secrets
   postBuild:
