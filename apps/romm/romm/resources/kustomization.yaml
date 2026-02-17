@@ -7,3 +7,49 @@ resources:
   - redis-helm-release.yaml
   - helm-release.yaml
   - ingressroute.yaml
+
+components:
+  - ../../../../components/cnpg-backups
+
+replacements:
+  - source:
+      kind: Cluster
+      name: romm-postgres
+      fieldPath: metadata.name
+    targets:
+      - select:
+          kind: ScheduledBackup
+          name: cnpg-backup-weekly
+        fieldPaths:
+          - spec.cluster.name
+      - select:
+          kind: ScheduledBackup
+          name: cnpg-snapshot-daily
+        fieldPaths:
+          - spec.cluster.name
+  - source:
+      kind: Cluster
+      name: romm-postgres
+      fieldPath: metadata.namespace
+    targets:
+      - select:
+          kind: Cluster
+          name: romm-postgres
+        fieldPaths:
+          - spec.plugins.0.parameters.serverName
+        options:
+          delimiter: "/"
+          index: 0
+  - source:
+      kind: Cluster
+      name: romm-postgres
+      fieldPath: metadata.name
+    targets:
+      - select:
+          kind: Cluster
+          name: romm-postgres
+        fieldPaths:
+          - spec.plugins.0.parameters.serverName
+        options:
+          delimiter: "/"
+          index: 1

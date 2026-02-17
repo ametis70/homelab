@@ -1,0 +1,17 @@
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: cnpg-backups
+spec:
+  retentionPolicy: "1m"
+  configuration:
+    destinationPath: "s3://cnpg-backups/"
+    endpointURL: "http://external-garage.traefik.svc.cluster.local:30188"
+    s3Credentials:
+      accessKeyId:
+        name: cnpg-backups-s3
+        key: accessKeyId
+      secretAccessKey:
+        name: cnpg-backups-s3
+        key: secretAccessKey

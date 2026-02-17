@@ -7,4 +7,4 @@ components:
   - ../../components/namespace
 
 resources:
-  - ./cloudnative-pg/ks.yaml
+  - ./cloudnative-pg-operator/ks.yaml

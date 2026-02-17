@@ -1,0 +1,11 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: cnpg-snapshot-daily
+spec:
+  schedule: "0 0 4 * * *"
+  backupOwnerReference: cluster
+  cluster:
+    name: $(CLUSTER_NAME)
+  method: volumeSnapshot

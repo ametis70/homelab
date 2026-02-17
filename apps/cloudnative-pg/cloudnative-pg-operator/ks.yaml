@@ -4,7 +4,7 @@ metadata:
   name: cloudnative-pg-operator
   namespace: cloudnative-pg
 spec:
-  path: ./apps/cloudnative-pg/cloudnative-pg/resources
+  path: ./apps/cloudnative-pg/cloudnative-pg-operator/resources
   prune: false
   sourceRef:
     kind: GitRepository
