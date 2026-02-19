@@ -10,7 +10,11 @@ spec:
 
   storage:
     size: 5Gi
-    storageClass: longhorn
+    storageClass: longhorn-single
+
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname
 
   managed:
     roles:
