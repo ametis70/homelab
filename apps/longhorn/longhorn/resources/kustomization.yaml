@@ -6,3 +6,4 @@ resources:
   - ingressroute.yaml
   - jobs.yaml
   - volume-snapshot-class.yaml
+  - storage-class-single.yaml
