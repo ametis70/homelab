@@ -15,3 +15,6 @@ spec:
       secretAccessKey:
         name: cnpg-backups-s3
         key: secretAccessKey
+      region:
+        name: cnpg-backups-s3
+        key: region

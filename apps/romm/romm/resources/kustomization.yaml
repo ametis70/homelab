@@ -4,6 +4,8 @@ resources:
   - pvc.yaml
   - external-secret.yaml
   - postgres-cluster.yaml
+  - postgres-cluster-alt.yaml
+  - postgres-alt-pv.yaml
   - redis-helm-release.yaml
   - helm-release.yaml
   - ingressroute.yaml
@@ -19,12 +21,12 @@ replacements:
     targets:
       - select:
           kind: ScheduledBackup
-          name: cnpg-backup-weekly
+          name: cnpg-backup-barman-daily
         fieldPaths:
           - spec.cluster.name
       - select:
           kind: ScheduledBackup
-          name: cnpg-snapshot-daily
+          name: cnpg-backup-volumesnapshot-daily
         fieldPaths:
           - spec.cluster.name
   - source:
