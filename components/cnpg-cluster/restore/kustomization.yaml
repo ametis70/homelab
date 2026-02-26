@@ -1,0 +1,47 @@
+---
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+components:
+  - ../base
+
+patches:
+  - path: cluster-restore-patch.yaml
+    target:
+      kind: Cluster
+  - path: cluster-no-initdb-patch.yaml
+    target:
+      kind: Cluster
+
+replacements:
+  - source:
+      kind: Cluster
+      fieldPath: metadata.namespace
+    targets:
+      - select:
+          kind: Cluster
+        fieldPaths:
+          - spec.externalClusters.0.plugin.parameters.serverName
+        options:
+          delimiter: "/"
+          index: 0
+  - source:
+      kind: Cluster
+      fieldPath: metadata.name
+    targets:
+      - select:
+          kind: Cluster
+        fieldPaths:
+          - spec.externalClusters.0.plugin.parameters.serverName
+        options:
+          delimiter: "/"
+          index: 1
+  - source:
+      kind: Cluster
+      fieldPath: metadata.name
+    targets:
+      - select:
+          kind: Cluster
+        fieldPaths:
+          - spec.bootstrap.recovery.source
+          - spec.externalClusters.0.name

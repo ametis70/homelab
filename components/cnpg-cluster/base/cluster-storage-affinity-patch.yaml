@@ -1,0 +1,11 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: _
+spec:
+  storage:
+    storageClass: longhorn-single
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname

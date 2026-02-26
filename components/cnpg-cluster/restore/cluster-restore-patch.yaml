@@ -1,0 +1,16 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: _
+spec:
+  bootstrap:
+    recovery:
+      source: _
+  externalClusters:
+    - name: _
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: cnpg-backups
+          serverName: _/_
