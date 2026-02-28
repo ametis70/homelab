@@ -2,13 +2,12 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: longhorn-single
+  name: longhorn-ephemeral
 provisioner: driver.longhorn.io
-reclaimPolicy: Retain
+reclaimPolicy: Delete
 allowVolumeExpansion: true
 volumeBindingMode: WaitForFirstConsumer
 parameters:
   numberOfReplicas: "1"
-  dataLocality: "strict-local"
   fsType: "ext4"
-  recurringJobSelector: '[{"name":"weekly-backup-4","isGroup":false}]'
+  recurringJobSelector: '[{"name":"ephemeral","isGroup":true}]'

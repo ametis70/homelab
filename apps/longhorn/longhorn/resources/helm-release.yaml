@@ -17,3 +17,5 @@ spec:
   values:
     defaultBackupStore:
       backupTarget: "nfs://truenas.lan:/mnt/backup/longhorn"
+    persistence:
+      reclaimPolicy: Retain
