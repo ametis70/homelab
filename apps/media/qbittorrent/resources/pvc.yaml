@@ -3,12 +3,12 @@ kind: PersistentVolumeClaim
 metadata:
   name: qbittorrent-config
   namespace: media
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 2Gi
-  storageClassName: ""
-  volumeName: qbittorrent-config
-
+  storageClassName: longhorn

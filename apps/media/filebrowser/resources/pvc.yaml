@@ -3,12 +3,12 @@ kind: PersistentVolumeClaim
 metadata:
   name: filebrowser-config
   namespace: media
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 2Gi
-  storageClassName: ""
-  volumeName: filebrowser-config
-
+  storageClassName: longhorn

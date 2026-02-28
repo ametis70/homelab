@@ -3,11 +3,12 @@ kind: PersistentVolumeClaim
 metadata:
   name: jellyfin-config
   namespace: media
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi
-  storageClassName: ""
-  volumeName: jellyfin-config
+  storageClassName: longhorn
