@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -10,6 +11,7 @@ spec:
     requests:
       storage: 3Gi
   storageClassName: longhorn
+  volumeName: wallabag-data
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -23,3 +25,18 @@ spec:
     requests:
       storage: 3Gi
   storageClassName: longhorn
+  volumeName: wallabag-images
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wallabag-redis
+  namespace: wallabag
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 512Mi
+  storageClassName: longhorn-ephemeral
+  volumeName: wallabag-redis
