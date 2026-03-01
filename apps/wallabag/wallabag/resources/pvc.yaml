@@ -4,6 +4,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: wallabag-data
   namespace: wallabag
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   accessModes:
     - ReadWriteOnce
@@ -11,13 +13,15 @@ spec:
     requests:
       storage: 3Gi
   storageClassName: longhorn
-  volumeName: wallabag-data
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: wallabag-images
   namespace: wallabag
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   accessModes:
     - ReadWriteOnce
@@ -25,7 +29,7 @@ spec:
     requests:
       storage: 3Gi
   storageClassName: longhorn
-  volumeName: wallabag-images
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -39,4 +43,4 @@ spec:
     requests:
       storage: 512Mi
   storageClassName: longhorn-ephemeral
-  volumeName: wallabag-redis
+

@@ -4,7 +4,6 @@ resources:
   - external-secret.yaml
   - postgres-cluster.yaml
   - redis-helm-release.yaml
-  - pv.yaml
   - pvc.yaml
   - helm-release.yaml
   - ingressroute.yaml
