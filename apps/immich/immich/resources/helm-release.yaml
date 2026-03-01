@@ -48,5 +48,5 @@ spec:
         cache:
           enabled: true
           type: persistentVolumeClaim
-          storageClass: longhorn
+          storageClass: longhorn-ephemeral
           size: 10Gi

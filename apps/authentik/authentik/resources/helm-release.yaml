@@ -59,3 +59,4 @@ spec:
       master:
         persistence:
           size: 1Gi
+          storageClass: longhorn-ephemeral

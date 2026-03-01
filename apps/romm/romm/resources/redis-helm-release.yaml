@@ -21,7 +21,7 @@ spec:
     master:
       persistence:
         enabled: true
-        storageClass: longhorn
+        storageClass: longhorn-ephemeral
         size: 1Gi
       resources:
         requests:

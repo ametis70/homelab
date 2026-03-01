@@ -4,6 +4,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: docker-mailserver-config
   namespace: mail
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   accessModes:
     - ReadWriteOnce
@@ -17,6 +19,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: docker-mailserver-data
   namespace: mail
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   accessModes:
     - ReadWriteOnce
@@ -30,6 +34,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: docker-mailserver-state
   namespace: mail
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   accessModes:
     - ReadWriteOnce
@@ -43,6 +49,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: docker-mailserver-logs
   namespace: mail
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   accessModes:
     - ReadWriteOnce
