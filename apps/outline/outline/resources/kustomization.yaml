@@ -8,4 +8,4 @@ resources:
   - ingressroute.yaml
 
 components:
-  - ../../../../components/cnpg-cluster/restore
+  - ../../../../components/cnpg-cluster/normal
