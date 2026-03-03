@@ -19,8 +19,8 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/bambanah/deemix
-              tag: v4.5.0@sha256:52a74c384c9b771d7cd2d05b9f122c39c69aaa241d92dcc33b96e7d54c342f22
+              repository: ghcr.io/ametis70/deemix
+              tag: v4.5.0-test-sync.2@sha256:bc0e578813e4e195df6814eb845b04f563a39d6651d422bb9f4af9e05ba979c7
             env:
               TZ: "America/Argentina/Buenos_Aires"
               PUID: 568
