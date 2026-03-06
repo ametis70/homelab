@@ -11,7 +11,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: docker-mailserver
-      version: 4.2.2
+      version: 4.2.4
   interval: 24h0m0s
   values:
     certificate: mail-tls-certificate-rsa
