@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: docker.io/filebrowser/filebrowser
-              tag: v2.42.5@sha256:8c9aefde747d181f024c9d7f16c363603a4f2b966518217c02354c07c47df25e
+              tag: v2.61.1@sha256:751252db58b56a23179f8ab19a4c4188792e86806e63737aa25999ef5d2b0c01
             env:
               TZ: "America/Argentina/Buenos_Aires"
               FB_ROOT: "/data"
