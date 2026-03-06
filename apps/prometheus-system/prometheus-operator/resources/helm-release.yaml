@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: prometheus-community
-      version: 75.15.1
+      version: 75.18.1
   interval: 24h0m0s
   values:
     # Prometheus Operator configuration
