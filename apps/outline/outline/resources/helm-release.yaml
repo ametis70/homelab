@@ -12,7 +12,7 @@ spec:
         kind: HelmRepository
         name: community-charts
         namespace: flux-system
-      version: 0.7.2
+      version: 0.7.3
   valuesFrom:
     - kind: Secret
       name: auth-secrets
