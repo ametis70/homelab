@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: traefik
-      version: 36.3.0
+      version: 39.0.4
   interval: 24h0m0s
   values:
     api:
