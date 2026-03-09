@@ -20,3 +20,6 @@ spec:
       valuesKey: values.yaml
   values:
     externalSecret: cloudflare-ddns-secrets
+    image:
+      repository: ghcr.io/aureum-cloud/cloudflare-ddns
+      tag: v1.0.3
