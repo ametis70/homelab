@@ -13,6 +13,8 @@ spec:
         name: bjw-s
         namespace: flux-system
       version: 4.2.0
+  upgrade:
+    timeout: 15m
   valuesFrom:
     - kind: Secret
       name: pg-secrets
