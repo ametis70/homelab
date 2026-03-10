@@ -52,3 +52,15 @@ spec:
   groups:
     - ephemeral
   labels: {}
+---
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: longhorn-system-backup
+  namespace: longhorn-system
+spec:
+  task: system-backup
+  cron: "0 6 * * *"
+  retain: 7
+  parameters:
+    volume-backup-policy: if-not-present
