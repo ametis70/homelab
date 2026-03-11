@@ -11,6 +11,8 @@
   ],
   "dependencyDashboard": true,
   "dependencyDashboardTitle": "Renovate Dashboard :robot:",
+  "schedule": ["* * * * 1"],
+  "timezone": "America/Argentina/Buenos_Aires",
   "flux": {
     "managerFilePatterns": ["/\\.ya?ml$/"]
   },
