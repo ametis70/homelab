@@ -1,0 +1,278 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: prometheus-downsampling-rules
+  namespace: prometheus-system
+  labels:
+    app: kube-prometheus-stack
+    release: prometheus-operator
+spec:
+  groups:
+    # 5-minute aggregates (medium resolution)
+    # Used for queries spanning 1-7 days
+    - name: downsampling_5m
+      interval: 5m
+      rules:
+        # === Node CPU Metrics ===
+        - record: node:cpu_usage_seconds:rate5m
+          expr: rate(node_cpu_seconds_total[5m])
+
+        - record: node:cpu_usage_percent:avg5m
+          expr: |
+            avg by (cluster, instance) (
+              rate(node_cpu_seconds_total{mode!="idle"}[5m])
+            ) * 100
+
+        # === Node Memory Metrics ===
+        - record: node:memory_used_bytes:avg5m
+          expr: |
+            avg_over_time(
+              (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)[5m:]
+            )
+
+        - record: node:memory_used_percent:avg5m
+          expr: |
+            avg_over_time(
+              ((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) 
+               / node_memory_MemTotal_bytes * 100)[5m:]
+            )
+
+        - record: node:memory_available_bytes:avg5m
+          expr: avg_over_time(node_memory_MemAvailable_bytes[5m:])
+
+        # === Container CPU Metrics ===
+        - record: container:cpu_usage_seconds:rate5m
+          expr: |
+            avg by (cluster, namespace, pod, container) (
+              rate(container_cpu_usage_seconds_total{image!="",container!=""}[5m])
+            )
+
+        - record: namespace:container_cpu_usage:sum5m
+          expr: |
+            sum by (cluster, namespace) (
+              rate(container_cpu_usage_seconds_total{container!=""}[5m])
+            )
+
+        # === Container Memory Metrics ===
+        - record: container:memory_working_set_bytes:avg5m
+          expr: |
+            avg_over_time(
+              container_memory_working_set_bytes{image!="",container!=""}[5m:]
+            )
+
+        - record: namespace:container_memory_usage_bytes:sum5m
+          expr: |
+            sum by (cluster, namespace) (
+              avg_over_time(container_memory_working_set_bytes{container!=""}[5m:])
+            )
+
+        - record: container:memory_rss_bytes:avg5m
+          expr: |
+            avg_over_time(container_memory_rss{image!="",container!=""}[5m:])
+
+        # === Pod Metrics ===
+        - record: pod:restarts:rate5m
+          expr: rate(kube_pod_container_status_restarts_total[5m])
+
+        - record: namespace:pod_count:sum5m
+          expr: |
+            count by (cluster, namespace) (
+              kube_pod_info
+            )
+
+        # === API Server Metrics ===
+        - record: apiserver:request_total:rate5m
+          expr: |
+            sum by (cluster, verb, code) (
+              rate(apiserver_request_total[5m])
+            )
+
+        - record: apiserver:request_duration_seconds:avg5m
+          expr: |
+            histogram_quantile(0.99, 
+              sum by (cluster, verb, le) (
+                rate(apiserver_request_duration_seconds_bucket[5m])
+              )
+            )
+
+        # === Network I/O ===
+        - record: node:network_receive_bytes:rate5m
+          expr: |
+            sum by (cluster, instance, device) (
+              rate(node_network_receive_bytes_total[5m])
+            )
+
+        - record: node:network_transmit_bytes:rate5m
+          expr: |
+            sum by (cluster, instance, device) (
+              rate(node_network_transmit_bytes_total[5m])
+            )
+
+        - record: container:network_receive_bytes:rate5m
+          expr: |
+            sum by (cluster, namespace, pod) (
+              rate(container_network_receive_bytes_total[5m])
+            )
+
+        - record: container:network_transmit_bytes:rate5m
+          expr: |
+            sum by (cluster, namespace, pod) (
+              rate(container_network_transmit_bytes_total[5m])
+            )
+
+        # === Disk I/O ===
+        - record: node:disk_read_bytes:rate5m
+          expr: |
+            sum by (cluster, instance, device) (
+              rate(node_disk_read_bytes_total[5m])
+            )
+
+        - record: node:disk_written_bytes:rate5m
+          expr: |
+            sum by (cluster, instance, device) (
+              rate(node_disk_written_bytes_total[5m])
+            )
+
+        - record: node:disk_io_time_seconds:rate5m
+          expr: |
+            rate(node_disk_io_time_seconds_total[5m])
+
+        # === Filesystem Metrics ===
+        - record: node:filesystem_avail_bytes:avg5m
+          expr: |
+            avg_over_time(
+              node_filesystem_avail_bytes{fstype!~"tmpfs|devtmpfs"}[5m:]
+            )
+
+        - record: node:filesystem_size_bytes:avg5m
+          expr: |
+            avg_over_time(
+              node_filesystem_size_bytes{fstype!~"tmpfs|devtmpfs"}[5m:]
+            )
+
+        # === etcd Metrics ===
+        - record: etcd:disk_wal_fsync_duration_seconds:avg5m
+          expr: |
+            histogram_quantile(0.99, 
+              rate(etcd_disk_wal_fsync_duration_seconds_bucket[5m])
+            )
+
+        - record: etcd:disk_backend_commit_duration_seconds:avg5m
+          expr: |
+            histogram_quantile(0.99, 
+              rate(etcd_disk_backend_commit_duration_seconds_bucket[5m])
+            )
+
+    # 15-minute aggregates (low resolution)
+    # Used for queries spanning 7-30 days
+    - name: downsampling_15m
+      interval: 15m
+      rules:
+        # === Node CPU (Aggregated) ===
+        - record: node:cpu_usage_percent:avg15m
+          expr: |
+            avg by (cluster, instance) (
+              rate(node_cpu_seconds_total{mode!="idle"}[15m])
+            ) * 100
+
+        - record: cluster:cpu_usage_percent:avg15m
+          expr: |
+            avg by (cluster) (
+              rate(node_cpu_seconds_total{mode!="idle"}[15m])
+            ) * 100
+
+        # === Node Memory (Aggregated) ===
+        - record: node:memory_used_percent:avg15m
+          expr: |
+            avg_over_time(
+              ((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) 
+               / node_memory_MemTotal_bytes * 100)[15m:]
+            )
+
+        - record: cluster:memory_used_percent:avg15m
+          expr: |
+            sum by (cluster) (
+              avg_over_time((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)[15m:])
+            ) / 
+            sum by (cluster) (
+              avg_over_time(node_memory_MemTotal_bytes[15m:])
+            ) * 100
+
+        # === Container CPU by Namespace ===
+        - record: namespace:container_cpu_usage:sum15m
+          expr: |
+            sum by (cluster, namespace) (
+              rate(container_cpu_usage_seconds_total{container!=""}[15m])
+            )
+
+        # === Container Memory by Namespace ===
+        - record: namespace:container_memory_usage_bytes:sum15m
+          expr: |
+            sum by (cluster, namespace) (
+              avg_over_time(container_memory_working_set_bytes{container!=""}[15m:])
+            )
+
+        # === Pod Counts ===
+        - record: namespace:pod_count:sum15m
+          expr: |
+            count by (cluster, namespace) (
+              kube_pod_info
+            )
+
+        - record: cluster:pod_count:sum15m
+          expr: |
+            count by (cluster) (
+              kube_pod_info
+            )
+
+        # === Network (Cluster-wide) ===
+        - record: cluster:network_receive_bytes:rate15m
+          expr: |
+            sum by (cluster) (
+              rate(node_network_receive_bytes_total[15m])
+            )
+
+        - record: cluster:network_transmit_bytes:rate15m
+          expr: |
+            sum by (cluster) (
+              rate(node_network_transmit_bytes_total[15m])
+            )
+
+        # === Disk I/O (Cluster-wide) ===
+        - record: cluster:disk_read_bytes:rate15m
+          expr: |
+            sum by (cluster) (
+              rate(node_disk_read_bytes_total[15m])
+            )
+
+        - record: cluster:disk_written_bytes:rate15m
+          expr: |
+            sum by (cluster) (
+              rate(node_disk_written_bytes_total[15m])
+            )
+
+        # === Filesystem Usage ===
+        - record: node:filesystem_usage_percent:avg15m
+          expr: |
+            (
+              avg_over_time(node_filesystem_size_bytes{fstype!~"tmpfs|devtmpfs"}[15m:])
+              -
+              avg_over_time(node_filesystem_avail_bytes{fstype!~"tmpfs|devtmpfs"}[15m:])
+            ) / 
+            avg_over_time(node_filesystem_size_bytes{fstype!~"tmpfs|devtmpfs"}[15m:])
+            * 100
+
+        # === API Server (Aggregated) ===
+        - record: apiserver:request_total:rate15m
+          expr: |
+            sum by (cluster, code) (
+              rate(apiserver_request_total[15m])
+            )
+
+        # === Container Restart Rate ===
+        - record: namespace:container_restarts:rate15m
+          expr: |
+            sum by (cluster, namespace) (
+              rate(kube_pod_container_status_restarts_total[15m])
+            )

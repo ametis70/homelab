@@ -28,7 +28,9 @@ spec:
     # Prometheus configuration
     prometheus:
       prometheusSpec:
-        retention: 14d
+        # Reduced retention for high-res data (30s scrapes)
+        # Recording rules provide 5m and 15m aggregates for 30d
+        retention: 7d
         retentionSize: 7GB
         storageSpec:
           volumeClaimTemplate:
@@ -38,12 +40,13 @@ spec:
               resources:
                 requests:
                   storage: 8Gi
+        # Increased memory limits (was at 94% usage)
         resources:
           requests:
-            memory: 512Mi
+            memory: 768Mi
             cpu: 250m
           limits:
-            memory: 1Gi
+            memory: 1536Mi
             cpu: 500m
 
     # Alertmanager configuration
@@ -56,9 +59,56 @@ spec:
       forceDeployDashboards: true
       defaultDashboardsEnabled: true
 
-    # Enable essential monitoring components
+    # Enable essential monitoring components with metric filtering
     prometheus-node-exporter:
       enabled: true
+      prometheus:
+        monitor:
+          metricRelabelings:
+            # Drop ARP, netstat, and conntrack details (rarely used)
+            - sourceLabels: [__name__]
+              regex: 'node_(arp_entries|netstat_.*|nf_conntrack_.*)'
+              action: drop
+            # Drop tmpfs/devtmpfs filesystem metrics
+            - sourceLabels: [__name__, fstype]
+              regex: 'node_filesystem_.*;(tmpfs|devtmpfs|overlay)'
+              action: drop
+            # Drop detailed network interface stats
+            - sourceLabels: [__name__]
+              regex: 'node_network_(receive|transmit)_packets_total'
+              action: drop
+            # Drop detailed timex metrics
+            - sourceLabels: [__name__]
+              regex: 'node_timex_.*'
+              action: drop
 
     kube-state-metrics:
       enabled: true
+      prometheus:
+        monitor:
+          metricRelabelings:
+            # Drop label/annotation metrics (huge cardinality, rarely queried)
+            - sourceLabels: [__name__]
+              regex: 'kube_.*_(labels|annotations)'
+              action: drop
+            # Drop created timestamps (not typically used)
+            - sourceLabels: [__name__]
+              regex: 'kube_.*_created'
+              action: drop
+    
+    # Add metric filtering to kubelet scrapes
+    kubelet:
+      serviceMonitor:
+        metricRelabelings:
+          # Drop container filesystem metrics (biggest storage consumer)
+          - sourceLabels: [__name__]
+            regex: 'container_fs_.*'
+            action: drop
+          # Drop detailed network protocol metrics
+          - sourceLabels: [__name__]
+            regex: 'container_network_(tcp|udp)_usage_total'
+            action: drop
+          # Drop blkio detailed metrics (use aggregates instead)
+          - sourceLabels: [__name__]
+            regex: 'container_blkio_device_usage_total'
+            action: drop
