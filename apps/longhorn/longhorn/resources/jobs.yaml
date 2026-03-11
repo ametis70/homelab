@@ -63,4 +63,4 @@ spec:
   cron: "0 6 * * *"
   retain: 7
   parameters:
-    volume-backup-policy: if-not-present
+    volume-backup-policy: disabled  # Only backup Longhorn system resources, not volume data
