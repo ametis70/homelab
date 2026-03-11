@@ -40,14 +40,15 @@ spec:
               resources:
                 requests:
                   storage: 8Gi
-        # Increased memory limits (was at 94% usage)
+        # Reduced resource requests after aggressive metric filtering
+        # Expected cardinality drop: 375k → ~50-80k series
         resources:
           requests:
-            memory: 768Mi
-            cpu: 250m
+            memory: 512Mi
+            cpu: 100m
           limits:
-            memory: 1536Mi
-            cpu: 500m
+            memory: 1Gi
+            cpu: 250m
 
     # Alertmanager configuration
     alertmanager:
@@ -100,6 +101,10 @@ spec:
     kubelet:
       serviceMonitor:
         metricRelabelings:
+          # Drop ALL histogram buckets from kubelet (massive cardinality reduction)
+          - sourceLabels: [__name__]
+            regex: '.*_bucket'
+            action: drop
           # Drop container filesystem metrics (biggest storage consumer)
           - sourceLabels: [__name__]
             regex: 'container_fs_.*'
@@ -112,3 +117,101 @@ spec:
           - sourceLabels: [__name__]
             regex: 'container_blkio_device_usage_total'
             action: drop
+          # Drop container spec metrics (mostly static)
+          - sourceLabels: [__name__]
+            regex: 'container_spec_.*'
+            action: drop
+          # Drop container file descriptors
+          - sourceLabels: [__name__]
+            regex: 'container_file_descriptors'
+            action: drop
+          # Drop container sockets
+          - sourceLabels: [__name__]
+            regex: 'container_sockets'
+            action: drop
+          # Drop container processes (use container_tasks_state instead)
+          - sourceLabels: [__name__]
+            regex: 'container_processes'
+            action: drop
+          # Drop container threads (use container_tasks_state instead)
+          - sourceLabels: [__name__]
+            regex: 'container_threads.*'
+            action: drop
+
+    # Add aggressive filtering for kubeApiServer metrics
+    kubeApiServer:
+      serviceMonitor:
+        metricRelabelings:
+          # Drop ALL histogram buckets (apiserver_request_duration_seconds_bucket = 54k series!)
+          - sourceLabels: [__name__]
+            regex: '(apiserver_.*|etcd_.*)_bucket'
+            action: drop
+          # Keep only the _count and _sum from histograms (enough for rate/avg calculations)
+          # Drop detailed SLI buckets
+          - sourceLabels: [__name__]
+            regex: 'apiserver_request_sli_duration_seconds_bucket'
+            action: drop
+          # Drop watch event size buckets
+          - sourceLabels: [__name__]
+            regex: 'apiserver_watch_events_sizes_bucket'
+            action: drop
+          # Drop body/response size buckets
+          - sourceLabels: [__name__]
+            regex: 'apiserver_(request_body_size_bytes|response_sizes)_bucket'
+            action: drop
+          # Drop audit event sizes
+          - sourceLabels: [__name__]
+            regex: 'apiserver_audit_event_total'
+            action: drop
+          # Drop detailed authentication metrics
+          - sourceLabels: [__name__]
+            regex: 'apiserver_authentication_.*'
+            action: drop
+          # Drop detailed authorization metrics
+          - sourceLabels: [__name__]
+            regex: 'apiserver_authorization_.*'
+            action: drop
+          # Drop admission controller webhook buckets
+          - sourceLabels: [__name__]
+            regex: 'apiserver_admission_.*_bucket'
+            action: drop
+          # Drop etcd request buckets (39k series!)
+          - sourceLabels: [__name__]
+            regex: 'etcd_request_duration_seconds_bucket'
+            action: drop
+          # Drop etcd db size buckets
+          - sourceLabels: [__name__]
+            regex: 'etcd_db_total_size_in_bytes_bucket'
+            action: drop
+
+    # Add aggressive filtering for kubeControllerManager metrics
+    kubeControllerManager:
+      serviceMonitor:
+        metricRelabelings:
+          # Drop ALL histogram buckets
+          - sourceLabels: [__name__]
+            regex: '.*_bucket'
+            action: drop
+          # Drop detailed workqueue metrics
+          - sourceLabels: [__name__]
+            regex: 'workqueue_(queue_duration|work_duration)_seconds_bucket'
+            action: drop
+
+    # Add aggressive filtering for kubeScheduler metrics
+    kubeScheduler:
+      serviceMonitor:
+        metricRelabelings:
+          # Drop ALL histogram buckets
+          - sourceLabels: [__name__]
+            regex: '.*_bucket'
+            action: drop
+
+    # Add aggressive filtering for kubeEtcd metrics
+    kubeEtcd:
+      serviceMonitor:
+        metricRelabelings:
+          # Drop ALL histogram buckets
+          - sourceLabels: [__name__]
+            regex: '.*_bucket'
+            action: drop
+
