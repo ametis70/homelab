@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: calibre-downloads-pvc
+  namespace: calibre
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 500Gi
+  selector:
+    matchLabels:
+      app: calibre-downloads
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: calibre-downloads-pv
+  labels:
+    app: calibre-downloads
+spec:
+  capacity:
+    storage: 500Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /mnt/main/downloads
+    server: truenas.lan
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: calibre-books-pvc
+  namespace: calibre
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 500Gi
+  selector:
+    matchLabels:
+      app: calibre-books
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: calibre-books-pv
+  labels:
+    app: calibre-books
+spec:
+  capacity:
+    storage: 500Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /mnt/main/books
+    server: truenas.lan
+  mountOptions:
+    - hard
+    - nfsvers=4.1
