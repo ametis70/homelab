@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: grafana-operator
-      version: 5.22.0
+      version: 5.22.2
   interval: 24h0m0s
   values:
     leaderElect: true
