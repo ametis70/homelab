@@ -12,7 +12,7 @@ spec:
         kind: HelmRepository
         name: bitnami
         namespace: flux-system
-      version: 25.3.2
+      version: 25.3.9
   values:
     fullnameOverride: wallabag-redis
     architecture: standalone
