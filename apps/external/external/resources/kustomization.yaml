@@ -5,3 +5,5 @@ resources:
   - nas-ingressroute.yaml
   - garage-service.yaml
   - garage-ingressroute.yaml
+  - ollama-service.yaml
+  - ollama-ingressroute.yaml
