@@ -1,0 +1,15 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: openwebui-ingress
+  namespace: ai
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: "Host(`openwebui.${DOMAIN}`)"
+      priority: 10
+      services:
+        - name: openwebui-open-webui
+          port: 80

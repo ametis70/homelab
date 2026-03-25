@@ -1,0 +1,28 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: openwebui
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 8m
+  path: ./apps/ai/openwebui/resources
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: ai
+  dependsOn:
+    - name: external-secrets-cluster
+      namespace: external-secrets
+    - name: traefik
+      namespace: traefik
+    - name: cloudnative-pg-operator
+      namespace: cloudnative-pg
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+        optional: false

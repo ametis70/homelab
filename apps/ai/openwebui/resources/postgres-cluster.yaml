@@ -1,0 +1,31 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: openwebui-postgres
+  namespace: ai
+spec:
+  instances: 1
+
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.2
+  primaryUpdateStrategy: unsupervised
+
+  postgresql:
+    shared_preload_libraries:
+      - "vector.so"
+
+  storage:
+    size: 5Gi
+
+  managed:
+    roles:
+      - name: openwebui
+        superuser: true
+        login: true
+
+  bootstrap:
+    initdb:
+      database: openwebui
+      owner: openwebui
+      secret:
+        name: pg-secrets
+      dataChecksums: true
