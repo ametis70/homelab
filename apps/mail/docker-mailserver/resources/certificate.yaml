@@ -10,7 +10,9 @@ spec:
     algorithm: RSA
     encoding: PKCS1
     size: 2048
-  dnsNames: ["${DOMAIN}"]
+  dnsNames:
+    - "${DOMAIN}"
+    - "mail.${DOMAIN}"
   issuerRef:
     name: letsencrypt-clusterissuer
     kind: ClusterIssuer
