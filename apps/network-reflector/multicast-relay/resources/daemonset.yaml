@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: multicast-relay
+  namespace: network-reflector
+  labels:
+    app: multicast-relay
+spec:
+  selector:
+    matchLabels:
+      app: multicast-relay
+  template:
+    metadata:
+      labels:
+        app: multicast-relay
+      annotations:
+        k8s.v1.cni.cncf.io/networks: |
+          [
+            {
+              "name": "private-vlan10",
+              "interface": "net1"
+            },
+            {
+              "name": "iot-vlan20",
+              "interface": "net2"
+            },
+            {
+              "name": "guest-vlan100",
+              "interface": "net3"
+            }
+          ]
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: intel-nixos-server
+
+      hostNetwork: false
+
+      containers:
+        - name: multicast-relay
+          image: docker.io/scyto/multicast-relay:latest
+          imagePullPolicy: IfNotPresent
+
+          env:
+            - name: INTERFACES
+              value: "net1 net2 net3"
+
+            - name: OPTS
+              value: "--noSonosDiscovery"
+
+          securityContext:
+            privileged: false
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - NET_ADMIN
+                - NET_RAW
+                - NET_BROADCAST
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+
+      # Tolerate node taints if any
+      tolerations:
+        - operator: Exists
