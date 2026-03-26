@@ -1,0 +1,92 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  namespace: adguard-home
+  name: adguard-home
+spec:
+  interval: 24h0m0s
+  chart:
+    spec:
+      chart: app-template
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      version: 4.6.2
+  values:
+    controllers:
+      adguard-home:
+        replicas: 1
+        strategy: Recreate
+        pod:
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+            fsGroup: 0
+            fsGroupChangePolicy: OnRootMismatch
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: ScheduleAnyway
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: adguard-home
+                  app.kubernetes.io/instance: adguard-home
+        containers:
+          app:
+            image:
+              repository: adguard/adguardhome
+              tag: v0.107.73@sha256:7fbf01d73ecb7a32d2d9e6cef8bf88e64bd787889ca80a1e8bce30cd4c084442
+            env:
+              TZ: "America/Argentina/Buenos_Aires"
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+                add:
+                  - NET_BIND_SERVICE
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 1000m
+                memory: 1Gi
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 80
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 3
+              readiness: *probes
+    service:
+      app:
+        controller: adguard-home
+        ports:
+          http:
+            port: 3000
+          webui:
+            port: 80
+    persistence:
+      config:
+        existingClaim: adguard-home-config
+        globalMounts:
+          - path: /opt/adguardhome/conf
+      data:
+        existingClaim: adguard-home-data
+        globalMounts:
+          - path: /opt/adguardhome/work
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

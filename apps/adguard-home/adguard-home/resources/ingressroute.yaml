@@ -1,0 +1,16 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: adguard-home
+  namespace: adguard-home
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: "Host(`adguard.${DOMAIN}`)"
+      priority: 10
+      services:
+        - name: adguard-home
+          port: 80
