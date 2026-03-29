@@ -15,7 +15,6 @@ resources:
   - prowlarr/ks.yaml
   - bazarr/ks.yaml
   - jellyfin/ks.yaml
-  - jellyseerr/ks.yaml
   - seerr/ks.yaml
   - flaresolverr/ks.yaml
   - cleanuparr/ks.yaml
