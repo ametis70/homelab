@@ -46,7 +46,7 @@ spec:
               value: "net1 net2 net3"
 
             - name: OPTS
-              value: "--verbose --noSonosDiscovery"
+              value: "--verbose --noSonosDiscovery --noMDNS"
 
           securityContext:
             privileged: false
