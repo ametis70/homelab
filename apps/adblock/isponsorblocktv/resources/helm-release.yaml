@@ -50,60 +50,44 @@ spec:
                 memory: 512Mi
             probes:
               liveness:
-                enabled: false
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - sh
+                      - -c
+                      - "pgrep -f 'python3.*main.pyc' > /dev/null"
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
               readiness:
-                enabled: false
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - sh
+                      - -c
+                      - "test -f /app/data/config.json && pgrep -f 'python3.*main.pyc' > /dev/null"
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
               startup:
-                enabled: false
-          # Setup container - exec into this to run: python /app/main.pyc setup
-          # kubectl exec -it -n adblock -c setup <pod-name> -- python /app/main.pyc setup
-          setup:
-            image:
-              repository: ghcr.io/dmunozv04/isponsorblocktv
-              tag: v2.6.1@sha256:545856523283753ebcf4b400a46895b9906844be5265a0f4cab98a6b0bdf84be
-            command:
-              - /bin/sh
-              - -c
-              - |
-                echo "iSponsorBlockTV Setup Container"
-                echo "================================"
-                echo ""
-                echo "To run the graphical setup wizard (recommended):"
-                echo "  kubectl exec -it -n adblock -c setup <pod-name> -- python /app/main.pyc setup"
-                echo ""
-                echo "To run the CLI setup:"
-                echo "  kubectl exec -it -n adblock -c setup <pod-name> -- python /app/main.pyc setup-cli"
-                echo ""
-                echo "Container ready for exec..."
-                sleep infinity
-            env:
-              TZ: "America/Argentina/Buenos_Aires"
-              TERM: "xterm-256color"
-            stdin: true
-            tty: true
-            securityContext:
-              privileged: false
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false
-              capabilities:
-                add:
-                  - NET_ADMIN
-                  - NET_RAW
-                  - NET_BROADCAST
-            resources:
-              requests:
-                cpu: 50m
-                memory: 128Mi
-              limits:
-                cpu: 200m
-                memory: 256Mi
-            probes:
-              liveness:
-                enabled: false
-              readiness:
-                enabled: false
-              startup:
-                enabled: false
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - sh
+                      - -c
+                      - "pgrep -f 'python3.*main.pyc' > /dev/null"
+                  initialDelaySeconds: 5
+                  periodSeconds: 5
+                  timeoutSeconds: 5
+                  failureThreshold: 12
     persistence:
       config:
         existingClaim: isponsorblocktv-config

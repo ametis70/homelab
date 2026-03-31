@@ -5,3 +5,10 @@ resources:
   - helm-release.yaml
   - network-attachment-definition.yaml
   - pvc.yaml
+
+# Uncomment to enable the setup container for initial configuration:
+# patches:
+#   - path: setup-container-patch.yaml
+#     target:
+#       kind: HelmRelease
+#       name: isponsorblocktv
