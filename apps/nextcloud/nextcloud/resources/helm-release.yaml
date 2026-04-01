@@ -1,0 +1,78 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+spec:
+  interval: 24h0m0s
+  chart:
+    spec:
+      chart: nextcloud
+      sourceRef:
+        kind: HelmRepository
+        name: nextcloud
+        namespace: flux-system
+  values:
+    image:
+      flavor: apache
+    
+    nextcloud:
+      host: nextcloud.${DOMAIN}
+      
+      existingSecret:
+        enabled: true
+        secretName: nextcloud-admin
+        usernameKey: username
+        passwordKey: password
+        smtpUsernameKey: smtp-username
+        smtpPasswordKey: smtp-password
+      
+      mail:
+        enabled: true
+        fromAddress: nextcloud
+        domain: ${DOMAIN}
+        smtp:
+          host: mail.${DOMAIN}
+          secure: ssl
+          port: 465
+          authtype: LOGIN
+      
+      persistence:
+        enabled: true
+        existingClaim: nextcloud-config
+        nextcloudData:
+          enabled: true
+          existingClaim: nextcloud-data
+    
+    internalDatabase:
+      enabled: false
+    
+    externalDatabase:
+      enabled: true
+      type: postgresql
+      host: nextcloud-postgres-rw:5432
+      database: nextcloud
+      existingSecret:
+        enabled: true
+        secretName: nextcloud-db
+        usernameKey: username
+        passwordKey: password
+    
+    redis:
+      enabled: false
+    
+    externalRedis:
+      enabled: true
+      host: nextcloud-valkey
+      port: 6379
+      existingSecret:
+        enabled: true
+        secretName: nextcloud-valkey-auth
+        passwordKey: password
+    
+    ingress:
+      enabled: false
+    
+    cronjob:
+      enabled: true
+      type: sidecar
