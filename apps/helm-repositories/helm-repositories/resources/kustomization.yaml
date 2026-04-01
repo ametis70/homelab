@@ -7,3 +7,5 @@ resources:
   - bitnami.yaml
   - grafana.yaml
   - intel-device-plugins.yaml
+  - nextcloud.yaml
+  - valkey.yaml
