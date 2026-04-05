@@ -26,8 +26,6 @@ spec:
       main:
         containers:
           main:
-            image:
-              tag: v2.2.3
             env:
               DB_HOSTNAME: immich-postgres-rw
               DB_DATABASE_NAME: immich
