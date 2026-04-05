@@ -110,6 +110,16 @@ spec:
             port: *port
     persistence:
       roms:
+        type: persistentVolumeClaim
         existingClaim: romm-roms-pvc
-        globalMounts:
-          - path: /romm
+        advancedMounts:
+          romm:
+            app:
+              - path: /romm/library
+                subPath: library
+              - path: /romm/resources
+                subPath: resources
+              - path: /romm/assets
+                subPath: assets
+              - path: /romm/config
+                subPath: config
