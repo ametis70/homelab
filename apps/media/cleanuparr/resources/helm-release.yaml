@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: ghcr.io/cleanuparr/cleanuparr
-              tag: 2.8.1@sha256:086470c766e2e2f6f010fc192ba728daa0a1ba77a7b17ff5e451f7c98c379a16
+              tag: 2.9.5@sha256:6c14c9560f0d97f248d02369fd9b122ec2d6d04af51b6c4ec87e7084b913cdf7
             env:
               TZ: "America/Argentina/Buenos_Aires"
               PORT: 11011
