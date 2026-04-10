@@ -40,12 +40,9 @@ spec:
           port: 465
           authtype: LOGIN
 
-      persistence:
-        enabled: true
-        existingClaim: nextcloud-config
-        nextcloudData:
-          enabled: true
-          existingClaim: nextcloud-data
+      podSecurityContext:
+        fsGroup: 33
+        fsGroupChangePolicy: "OnRootMismatch"
 
       configs:
         proxy.config.php: |-
@@ -102,3 +99,10 @@ spec:
     phpClientHttpsFix:
       enabled: true
       protocol: https
+
+    persistence:
+      enabled: true
+      existingClaim: nextcloud-config
+      nextcloudData:
+        enabled: true
+        existingClaim: nextcloud-data

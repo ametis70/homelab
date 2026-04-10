@@ -12,4 +12,4 @@ resources:
   - ingressroute.yaml
 
 components:
-  - ../../../../components/cnpg-cluster/normal
+  - ../../../../components/cnpg-cluster/init
