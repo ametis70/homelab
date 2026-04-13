@@ -14,10 +14,10 @@ spec:
         namespace: flux-system
   values:
     image:
-      flavor: fpm
+      flavor: apache
 
     nginx:
-      enabled: true
+      enabled: false
 
     nextcloud:
       host: nextcloud.${DOMAIN}
@@ -61,6 +61,7 @@ spec:
             'maintenance_window_start' => 1,
             'default_phone_region' => 'AR',
             'instanceid' => 'nextcloud-homelab',
+            'allow_local_remote_servers' => true,
           );
 
     internalDatabase:
