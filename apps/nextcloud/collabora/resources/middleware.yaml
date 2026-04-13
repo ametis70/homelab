@@ -8,5 +8,6 @@ spec:
   headers:
     customRequestHeaders:
       X-Forwarded-Proto: "https"
+      X-Forwarded-Host: "collabora.${DOMAIN}"
     customResponseHeaders:
-      X-Frame-Options: "SAMEORIGIN"
+      X-Frame-Options: ""  # Allow framing from Nextcloud

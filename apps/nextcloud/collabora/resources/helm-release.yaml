@@ -35,11 +35,11 @@ spec:
     
     resources:
       requests:
-        memory: "512Mi"
+        memory: "1Gi"
         cpu: "500m"
       limits:
-        memory: "512Mi"
-        cpu: "1000m"
+        memory: "2Gi"
+        cpu: "2000m"
     
     autoscaling:
       enabled: false
