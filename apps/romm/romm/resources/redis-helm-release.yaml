@@ -12,7 +12,7 @@ spec:
         kind: HelmRepository
         name: bitnami
         namespace: flux-system
-      version: 25.3.9
+      version: 25.3.11
   values:
     fullnameOverride: romm-redis
     architecture: standalone
