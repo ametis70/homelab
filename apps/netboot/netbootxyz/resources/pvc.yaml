@@ -1,0 +1,54 @@
+---
+# Longhorn PVC for config (small, persistent app config)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: netbootxyz-config
+  namespace: netboot
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 512Mi
+  storageClassName: longhorn
+---
+# NFS PV for assets (boot images, ISOs, etc.)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: netbootxyz-assets-pv
+  labels:
+    app: netbootxyz-assets
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /mnt/main/netboot
+    server: truenas.lan
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+---
+# NFS PVC for assets
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: netbootxyz-assets
+  namespace: netboot
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Gi
+  selector:
+    matchLabels:
+      app: netbootxyz-assets
