@@ -1,0 +1,35 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: inventree-valkey
+  namespace: inventree
+spec:
+  interval: 24h0m0s
+  chart:
+    spec:
+      chart: valkey
+      sourceRef:
+        kind: HelmRepository
+        name: valkey
+        namespace: flux-system
+      version: 0.9.3
+  values:
+    auth:
+      enabled: true
+      usersExistingSecret: "inventree-valkey-auth"
+      aclUsers:
+        default:
+          permissions: "~* &* +@all"
+          passwordKey: "password"
+
+    dataStorage:
+      enabled: true
+      requestedSize: 2Gi
+      className: longhorn-ephemeral
+
+    replica:
+      enabled: false
+
+    service:
+      type: ClusterIP
+      port: 6379

@@ -1,0 +1,178 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  namespace: inventree
+  name: inventree
+spec:
+  interval: 24h0m0s
+  chart:
+    spec:
+      chart: inventree
+      sourceRef:
+        kind: HelmRepository
+        name: inventree
+        namespace: flux-system
+      version: 0.4.10
+
+  values:
+    replicaCount: 1
+
+    global:
+      # Site URL for InvenTree
+      siteUrl: "https://inventree.${DOMAIN}"
+
+      # Admin credentials from external secret
+      adminSecret: "inventree-admin"
+
+      # Database configuration
+      dbSecrets:
+        - name: INVENTREE_DB_ENGINE
+          value: "postgresql"
+        - name: INVENTREE_DB_HOST
+          value: "inventree-postgres-rw"
+        - name: INVENTREE_DB_PORT
+          value: "5432"
+        - name: INVENTREE_DB_NAME
+          value: "inventree"
+        - name: INVENTREE_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: "inventree-db"
+              key: "username"
+        - name: INVENTREE_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: "inventree-db"
+              key: "password"
+
+      # Cache (Valkey) configuration
+      cacheSecrets:
+        - name: INVENTREE_CACHE_HOST
+          value: "inventree-valkey"
+        - name: INVENTREE_CACHE_PORT
+          value: "6379"
+        - name: INVENTREE_CACHE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: "inventree-valkey-auth"
+              key: "password"
+
+      # Email configuration
+      emailSecrets:
+        - name: INVENTREE_EMAIL_HOST
+          value: "mail.${DOMAIN}"
+        - name: INVENTREE_EMAIL_PORT
+          value: "465"
+        - name: INVENTREE_EMAIL_USE_SSL
+          value: "true"
+        - name: INVENTREE_EMAIL_USE_TLS
+          value: "false"
+        - name: INVENTREE_EMAIL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: "inventree-email"
+              key: "INVENTREE_EMAIL_USERNAME"
+        - name: INVENTREE_EMAIL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: "inventree-email"
+              key: "INVENTREE_EMAIL_PASSWORD"
+
+      # Enable init container for migrations
+      initEnabled: true
+
+      # SSO configuration with OIDC via Authentik
+      ssoConfig:
+        backends:
+          - "allauth.socialaccount.providers.openid_connect"
+        providerSecretName: "inventree-sso"
+
+    # Enable plugins
+    plugins:
+      enabled: true
+
+    # Custom environment variables
+    env:
+      # Enable SSO registration (separate from regular registration)
+      INVENTREE_LOGIN_ENABLE_SSO_REG: "True"
+      # Also enable SSO login
+      INVENTREE_LOGIN_ENABLE_SSO: "True"
+
+    image:
+      repository: inventree/inventree
+      pullPolicy: IfNotPresent
+      tag: "1.3.0"
+
+    serviceProxy:
+      image: nginx
+      tag: stable
+
+    # Service configuration
+    service:
+      type: ClusterIP
+      port: 8000
+
+    # Enable built-in ingress (required to fix nginx server_name bug in Helm chart)
+    ingress:
+      main:
+        enabled: true
+        className: traefik
+        hosts:
+          - host: "inventree.${DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+
+    # Resource limits
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+
+    # Security context - InvenTree needs root access
+    # See: https://github.com/inventree/helm-charts/issues/38
+    podSecurityContext:
+      fsGroup: 1000
+      fsGroupChangePolicy: OnRootMismatch
+
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+
+    # Health probes
+    livenessProbe:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 5
+
+    readinessProbe:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 3
+
+    # Persistence configuration
+    persistence:
+      enabled: true
+      existingClaim: "inventree-data"
+      mountPath: /home/inventree/data
+
+    # Worker configuration
+    worker:
+      service:
+        type: ClusterIP
+        port: 8000
+      autoscaling:
+        enabled: false
