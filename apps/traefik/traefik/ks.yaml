@@ -21,6 +21,8 @@ spec:
     - name: cert-manager
       namespace: cert-manager
   postBuild:
+    substitute:
+      quote: '"'
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

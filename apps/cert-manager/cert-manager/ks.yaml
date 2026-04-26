@@ -19,8 +19,6 @@ spec:
     - name: external-secrets-cluster
       namespace: external-secrets
   postBuild:
-    substitute:
-      quote: '"'
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
