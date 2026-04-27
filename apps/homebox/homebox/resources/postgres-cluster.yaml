@@ -1,0 +1,24 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: homebox-postgres
+  namespace: homebox
+spec:
+  instances: 1
+
+  storage:
+    size: 5Gi
+
+  managed:
+    roles:
+      - name: homebox
+        superuser: false
+        login: true
+
+  bootstrap:
+    initdb:
+      database: homebox
+      owner: homebox
+      secret:
+        name: pg-secrets
+      dataChecksums: true
