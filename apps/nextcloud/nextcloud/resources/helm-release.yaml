@@ -107,3 +107,32 @@ spec:
       nextcloudData:
         enabled: true
         existingClaim: nextcloud-data
+
+    collabora:
+      enabled: true
+
+      collabora:
+        aliasgroups:
+          - host: "https://nextcloud.${DOMAIN}"
+        extra_params: "--o:ssl.enabled=false --o:ssl.termination=true"
+        server_name: "collabora.${DOMAIN}"
+
+        existingSecret:
+          enabled: true
+          secretName: nextcloud-collabora
+          usernameKey: username
+          passwordKey: password
+
+      ingress:
+        enabled: false
+
+      resources:
+        requests:
+          memory: "512Mi"
+          cpu: "500m"
+        limits:
+          memory: "512Mi"
+          cpu: "1000m"
+
+      autoscaling:
+        enabled: false
