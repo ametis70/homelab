@@ -16,6 +16,51 @@ spec:
     image:
       flavor: apache
 
+    # Temporary fix for PHP 8.4 TypeError in Nextcloud 33.0.2 with LDAP authentication
+    # This patches /var/www/html/lib/private/Config/UserConfig.php line 688
+    # to add (string) type casting before strtolower() call
+    # Reference: https://github.com/nextcloud/server/issues/58421
+    # TODO: Remove this when upgrading to Nextcloud 33.0.3 or later
+    lifecycle:
+      postStartCommand:
+        - /bin/sh
+        - -c
+        - |
+          # Wait for Nextcloud initialization to complete
+          echo "[PHP 8.4 Fix] Waiting for Nextcloud files to be ready..."
+          for i in $(seq 1 30); do
+            if [ -f /var/www/html/lib/private/Config/UserConfig.php ]; then
+              echo "[PHP 8.4 Fix] Nextcloud files detected."
+              break
+            fi
+            echo "[PHP 8.4 Fix] Waiting... ($i/30)"
+            sleep 2
+          done
+          
+          TARGET_FILE="/var/www/html/lib/private/Config/UserConfig.php"
+          
+          if [ ! -f "$TARGET_FILE" ]; then
+            echo "[PHP 8.4 Fix] ERROR: Target file not found after waiting!"
+            exit 0
+          fi
+          
+          # Check if already patched
+          if grep -q '(string)\$this->getTypedValue' "$TARGET_FILE"; then
+            echo "[PHP 8.4 Fix] Already applied, skipping."
+            exit 0
+          fi
+          
+          # Apply the fix
+          echo "[PHP 8.4 Fix] Applying fix to line 688..."
+          sed -i '688s/strtolower(\$this->getTypedValue/strtolower((string)\$this->getTypedValue/' "$TARGET_FILE"
+          
+          # Verify the fix was applied
+          if grep -q '(string)\$this->getTypedValue' "$TARGET_FILE"; then
+            echo "[PHP 8.4 Fix] ✓ Fix applied successfully!"
+          else
+            echo "[PHP 8.4 Fix] WARNING: Fix may not have been applied correctly."
+          fi
+
     nginx:
       enabled: false
 
