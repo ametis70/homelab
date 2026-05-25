@@ -41,7 +41,7 @@ spec:
           app:
             image:
               repository: jellyfin/jellyfin
-              tag: 10.11.8
+              tag: 10.11.10
             env:
               TZ: "America/Argentina/Buenos_Aires"
               JELLYFIN_PublishedServerUrl: "https://jellyfin.${DOMAIN}"
