@@ -98,6 +98,14 @@ spec:
       enabled: true
       type: sidecar
 
+    startupProbe:
+      enabled: true
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 30
+      successThreshold: 1
+
     phpClientHttpsFix:
       enabled: true
       protocol: https
