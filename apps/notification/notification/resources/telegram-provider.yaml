@@ -7,6 +7,6 @@ metadata:
 spec:
   type: telegram
   address: https://api.telegram.org
-  channel: "-4934295929"
+  channel: "-5120369328"
   secretRef:
     name: notification-telegram-secrets
