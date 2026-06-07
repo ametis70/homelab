@@ -22,3 +22,4 @@ resources:
   - deemix/ks.yaml
   - navidrome/ks.yaml
   - beets/ks.yaml
+  - decypharr/ks.yaml

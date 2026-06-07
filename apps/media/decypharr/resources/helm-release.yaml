@@ -1,0 +1,60 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  namespace: media
+  name: decypharr
+spec:
+  interval: 24h0m0s
+  chart:
+    spec:
+      chart: app-template
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      version: 4.6.2
+  values:
+    controllers:
+      decypharr:
+        pod:
+          securityContext:
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+        containers:
+          app:
+            image:
+              repository: ghcr.io/sirrobot01/decypharr
+              tag: v2.3@sha256:94359465fb6337b2ab8168c6abdacf2a8fb60b6b009002ef1bbf3c466823ff31
+            env:
+              TZ: "America/Argentina/Buenos_Aires"
+              PUID: 568
+              PGID: 568
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 8282
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+
+    service:
+      app:
+        controller: decypharr
+        ports:
+          http:
+            port: *port
+    persistence:
+      config:
+        existingClaim: decypharr-config
+        globalMounts:
+          - path: /app
+      downloads:
+        existingClaim: media-downloads-pvc
+        globalMounts:
+          - path: /downloads
