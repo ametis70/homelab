@@ -1,0 +1,27 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: onlyoffice-postgres
+  namespace: nextcloud
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  primaryUpdateStrategy: unsupervised
+
+  storage:
+    size: 5Gi
+    storageClass: longhorn-single
+
+  managed:
+    roles:
+      - name: onlyoffice
+        superuser: true
+        login: true
+
+  bootstrap:
+    initdb:
+      database: onlyoffice
+      owner: onlyoffice
+      secret:
+        name: pg-secrets

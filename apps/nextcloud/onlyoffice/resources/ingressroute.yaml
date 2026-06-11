@@ -1,0 +1,31 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: onlyoffice
+  namespace: nextcloud
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: "Host(`onlyoffice.${DOMAIN}`)"
+      priority: 10
+      middlewares:
+        - name: onlyoffice-headers
+      services:
+        - name: onlyoffice
+          port: 80
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: onlyoffice-headers
+  namespace: nextcloud
+spec:
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
+      X-Forwarded-Host: "onlyoffice.${DOMAIN}"
+    customResponseHeaders:
+      X-Frame-Options: ""
