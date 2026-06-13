@@ -8,5 +8,4 @@ components:
 
 resources:
   - ./nextcloud/ks.yaml
-  - ./collabora/ks.yaml
   - ./onlyoffice/ks.yaml
