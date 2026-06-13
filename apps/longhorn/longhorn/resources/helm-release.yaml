@@ -19,3 +19,5 @@ spec:
       backupTarget: "nfs://truenas.lan:/mnt/backup/longhorn"
     persistence:
       reclaimPolicy: Retain
+    defaultSettings:
+      concurrentAutomaticEngineUpgradePerNodeLimit: 3
