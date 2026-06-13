@@ -40,6 +40,13 @@ spec:
 
     tika:
       enabled: true
+      resources:
+        requests:
+          cpu: 100m
+          memory: 512Mi
+        limits:
+          cpu: "1"
+          memory: 2000Mi
 
     persistence:
       enabled: true
