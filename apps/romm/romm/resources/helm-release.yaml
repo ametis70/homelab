@@ -75,7 +75,7 @@ spec:
               DB_PORT: "5432"
               DB_NAME: romm
               ROMM_DB_DRIVER: postgresql
-              REDIS_HOST: romm-redis-master
+              REDIS_HOST: romm-valkey
               REDIS_PORT: "6379"
               REDIS_DB: "0"
               OIDC_ENABLED: "true"
@@ -123,3 +123,40 @@ spec:
                 subPath: assets
               - path: /romm/config
                 subPath: config
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: romm-valkey
+  namespace: romm
+spec:
+  interval: 24h0m0s
+  chart:
+    spec:
+      chart: valkey
+      sourceRef:
+        kind: HelmRepository
+        name: valkey
+        namespace: flux-system
+      version: 0.9.4
+  values:
+    fullnameOverride: romm-valkey
+    image:
+      tag: 9.0.2-alpine3.23@sha256:68677f85c863830af7836ff07c4a13b7f085ebeff62f4dedb71499ca27d229f2
+    auth:
+      enabled: false
+    dataStorage:
+      enabled: true
+      requestedSize: 1Gi
+      className: longhorn-ephemeral
+    replica:
+      enabled: false
+    service:
+      type: ClusterIP
+      port: 6379
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        memory: 512Mi

@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - bjw-s.yaml
   - community-charts.yaml
-  - bitnami.yaml
   - grafana.yaml
   - intel-device-plugins.yaml
   - inventree.yaml

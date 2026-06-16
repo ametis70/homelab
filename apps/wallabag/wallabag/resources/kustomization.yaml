@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - external-secret.yaml
   - postgres-cluster.yaml
-  - redis-helm-release.yaml
   - pvc.yaml
   - helm-release.yaml
   - ingressroute.yaml

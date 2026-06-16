@@ -50,7 +50,7 @@ spec:
               SYMFONY__ENV__FOSUSER_REGISTRATION: "false"
               SYMFONY__ENV__FOSUSER_CONFIRMATION: "true"
               SYMFONY__ENV__LOCALE: en
-              SYMFONY__ENV__REDIS_HOST: wallabag-redis-master
+              SYMFONY__ENV__REDIS_HOST: wallabag-valkey
               SYMFONY__ENV__REDIS_PORT: "6379"
               SYMFONY__ENV__FROM_EMAIL: wallabag@${DOMAIN}
             resources:
@@ -89,3 +89,40 @@ spec:
         existingClaim: wallabag-images
         globalMounts:
           - path: /var/www/wallabag/web/assets/images
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: wallabag-valkey
+  namespace: wallabag
+spec:
+  interval: 24h0m0s
+  chart:
+    spec:
+      chart: valkey
+      sourceRef:
+        kind: HelmRepository
+        name: valkey
+        namespace: flux-system
+      version: 0.9.4
+  values:
+    fullnameOverride: wallabag-valkey
+    image:
+      tag: 9.0.2-alpine3.23@sha256:68677f85c863830af7836ff07c4a13b7f085ebeff62f4dedb71499ca27d229f2
+    auth:
+      enabled: false
+    dataStorage:
+      enabled: true
+      requestedSize: 512Mi
+      className: longhorn-ephemeral
+    replica:
+      enabled: false
+    service:
+      type: ClusterIP
+      port: 6379
+    resources:
+      requests:
+        cpu: 25m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
