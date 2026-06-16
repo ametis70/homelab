@@ -12,30 +12,18 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: traefik
-      version: 36.3.0
+      version: 40.3.0
   interval: 24h0m0s
   values:
     api:
       dashboard: true
       insecure: false
     service:
-      type: LoadBalancer
-      externalTrafficPolicy: Local
       annotations:
         kube-vip.io/loadbalancerIPs: 10.0.30.100
-    entryPoints:
-      web:
-        forwardedHeaders:
-          trustedIPs:
-            - "10.0.0.0/8"
-            - "192.168.0.0/16"
-            - "172.16.0.0/12"
-      websecure:
-        forwardedHeaders:
-          trustedIPs:
-            - "10.0.0.0/8"
-            - "192.168.0.0/16"
-            - "172.16.0.0/12"
+      spec:
+        type: LoadBalancer
+        externalTrafficPolicy: Local
     providers:
       kubernetesCRD:
         allowCrossNamespace: true
@@ -47,8 +35,20 @@ spec:
         format: json
     ports:
       web:
-        redirections:
-          entryPoint:
-            to: websecure
-            scheme: https
-            permanent: true
+        forwardedHeaders:
+          trustedIPs:
+            - "10.0.0.0/8"
+            - "192.168.0.0/16"
+            - "172.16.0.0/12"
+        http:
+          redirections:
+            entryPoint:
+              to: websecure
+              scheme: https
+              permanent: true
+      websecure:
+        forwardedHeaders:
+          trustedIPs:
+            - "10.0.0.0/8"
+            - "192.168.0.0/16"
+            - "172.16.0.0/12"
