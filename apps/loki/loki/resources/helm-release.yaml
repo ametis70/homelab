@@ -11,12 +11,12 @@ spec:
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
-        name: grafana
+        name: grafana-community
         namespace: flux-system
-      version: 6.55.0
+      version: 17.3.1
   interval: 24h0m0s
   values:
-    deploymentMode: SingleBinary
+    deploymentMode: Monolithic
 
     singleBinary:
       # Ensure Loki expands env vars in its config

@@ -5,6 +5,7 @@ resources:
   - bjw-s.yaml
   - community-charts.yaml
   - grafana.yaml
+  - grafana-community.yaml
   - intel-device-plugins.yaml
   - inventree.yaml
   - nextcloud.yaml
