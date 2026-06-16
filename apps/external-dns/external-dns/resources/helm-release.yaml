@@ -1,0 +1,55 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: external-dns
+  namespace: external-dns
+spec:
+  chart:
+    spec:
+      chart: external-dns
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: external-dns
+      version: 1.21.1
+  interval: 24h
+  values:
+    fullnameOverride: external-dns
+    provider:
+      name: webhook
+      webhook:
+        image:
+          repository: ghcr.io/home-operations/external-dns-unifi-webhook
+          tag: 0.10.4@sha256:6190121c68ae5b80fdb61a95de767e8f303077faac3e49325dfa0183fa205ea8
+        env:
+          - name: UNIFI_HOST
+            value: https://10.0.30.1
+          - name: UNIFI_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: external-dns-unifi
+                key: UNIFI_API_KEY
+          - name: UNIFI_SKIP_TLS_VERIFY
+            value: "true"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http-webhook
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: http-webhook
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+    triggerLoopOnEvent: true
+    policy: sync
+    sources:
+      - traefik-proxy
+      - ingress
+    txtOwnerId: homelab
+    txtPrefix: k8s.homelab.%{record_type}-
+    domainFilters:
+      - "${DOMAIN}"

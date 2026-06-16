@@ -49,6 +49,16 @@ spec:
               target:
                 group: helm.toolkit.fluxcd.io
                 kind: HelmRelease
+            - patch: |-
+                apiVersion: traefik.io/v1alpha1
+                kind: IngressRoute
+                metadata:
+                  name: _
+                  annotations:
+                    external-dns.alpha.kubernetes.io/target: 10.0.30.100
+              target:
+                group: traefik.io
+                kind: IngressRoute
       target:
         group: kustomize.toolkit.fluxcd.io
         kind: Kustomization
