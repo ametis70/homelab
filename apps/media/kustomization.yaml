@@ -18,7 +18,6 @@ resources:
   - seerr/ks.yaml
   - flaresolverr/ks.yaml
   - cleanuparr/ks.yaml
-  - huntarr/ks.yaml
   - deemix/ks.yaml
   - navidrome/ks.yaml
   - beets/ks.yaml
