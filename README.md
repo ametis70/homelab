@@ -23,28 +23,32 @@ The cluster is deployed on k3s and fully managed via GitOps using the [Flux Oper
 - **GPU** — [Intel GPU plugin](https://github.com/intel/intel-device-plugins-for-kubernetes) exposes hardware acceleration
 - **Secrets** — [External Secrets Operator](https://external-secrets.io) syncs secrets from an external store
 - **Database** — [CloudNativePG](https://cloudnative-pg.io) manages PostgreSQL clusters with continuous WAL archiving and automated backups via barman-cloud
+- **DNS** — [external-dns](https://github.com/kubernetes-sigs/external-dns) automatically updates DNS records on UDM Pro
 - **Ingress** — [Traefik](https://traefik.io) handles routing and TLS termination
 - **Auth** — [Authentik](https://goauthentik.io) provides SSO and identity management
 - **Monitoring** — [Prometheus](https://prometheus.io), [Grafana](https://grafana.com), [Loki](https://grafana.com/oss/loki), and [Alloy](https://grafana.com/oss/alloy) for metrics, dashboards, and log aggregation
 - **Updates** — [Renovate](https://www.mend.io/renovate/) keeps dependencies updated via pull requests
 - **Notifications** — Flux alerts are forwarded via Telegram
 
-## Hardware
-
-All nodes run [k3s](https://k3s.io) on [NixOS](https://nixos.org).
-
-- **Bare metal** — 1x Atom N100 PC with 16GB RAM and 500GB storage
-- **Virtual machines** — 2x VMs with 16GB RAM and 300GB storage each
-
-## External Storage
+### External Storage
 
 - **TrueNAS** — hosts NFS shares for shared storage
 - **Garage** — provides S3-compatible object storage
 
-## External Dependencies
+### External Dependencies
 
-- **Secrets** — Google Cloud Platform Secrets Manager is the external secret store
+- **Secrets** — [Infisical](https://infisical.com) is the external secret store
 - **DNS** — Cloudflare provides dynamic DNS updates
+
+## Hardware
+
+- **Bare metal** — 1x Atom N100 PC with 16GB RAM and 500GB storage
+- **Hypervisor** — 1x Ryzen 5900XT PC with 128GB RAM
+  - **Virtual machines** — 2x VMs with 16GB RAM and 300GB storage each
+- **NAS** — 1x UGREEN NASync DXP4800 Plus with 40TB storage (20TB usable, mirrored)
+- **Router** — Ubiquiti Dream Machine Pro
+
+All nodes run [k3s](https://k3s.io) on [NixOS](https://nixos.org).
 
 ## Notes
 
