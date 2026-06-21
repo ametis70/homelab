@@ -70,13 +70,14 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/rommapp/romm
-              tag: 4.9.1
+              repository: ghcr.io/ametis70/romm-testing
+              tag: test-romm-fixes
             env:
               TZ: "America/Argentina/Buenos_Aires"
               LOGLEVEL: INFO
               ROMM_BASE_URL: "https://romm.${DOMAIN}"
               ROMM_BASE_PATH: /romm
+              ROMM_TMP_PATH: "/romm/tmp"
               ROMM_PORT: "8080"
               DB_HOST: romm-postgres-rw
               DB_PORT: "5432"
@@ -130,6 +131,8 @@ spec:
                 subPath: assets
               - path: /romm/config
                 subPath: config
+              - path: /romm/tmp
+                subPath: tmp
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
