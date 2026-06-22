@@ -151,7 +151,7 @@ spec:
         kind: HelmRepository
         name: valkey
         namespace: flux-system
-      version: 0.9.4
+      version: 0.10.0
   values:
     fullnameOverride: outline-valkey
     image:
