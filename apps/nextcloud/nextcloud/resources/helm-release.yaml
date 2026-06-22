@@ -131,7 +131,7 @@ spec:
         kind: HelmRepository
         name: valkey
         namespace: flux-system
-      version: 0.9.4
+      version: 0.10.0
   values:
     image:
       tag: 9.0.2-alpine3.23@sha256:68677f85c863830af7836ff07c4a13b7f085ebeff62f4dedb71499ca27d229f2
