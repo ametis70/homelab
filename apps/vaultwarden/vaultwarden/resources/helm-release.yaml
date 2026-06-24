@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: vaultwarden
-      version: 0.39.0
+      version: 0.43.0
   interval: 24h0m0s
   values:
     timeZone: "America/Argentina/Buenos_Aires"
