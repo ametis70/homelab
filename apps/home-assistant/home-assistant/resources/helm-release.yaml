@@ -25,6 +25,22 @@ spec:
             runAsNonRoot: true
             fsGroup: 65534
             fsGroupChangePolicy: OnRootMismatch
+        initContainers:
+          add-routes:
+            image:
+              repository: busybox
+              tag: latest
+            command:
+              - /bin/sh
+              - -c
+              - ip route add 10.0.10.0/24 via 10.0.20.1 dev net1
+            securityContext:
+              runAsUser: 0
+              runAsNonRoot: false
+              privileged: false
+              capabilities:
+                add:
+                  - NET_ADMIN
         containers:
           app:
             image:
