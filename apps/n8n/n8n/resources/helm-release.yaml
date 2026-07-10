@@ -1,0 +1,148 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: n8n
+  namespace: n8n
+spec:
+  interval: 24h0m0s
+  chart:
+    spec:
+      chart: n8n
+      sourceRef:
+        kind: HelmRepository
+        name: community-charts
+        namespace: flux-system
+      version: 1.24.8
+  valuesFrom:
+    - kind: Secret
+      name: pg-secrets
+      valuesKey: username
+      targetPath: externalPostgresql.username
+  values:
+    image:
+      tag: 2.29.10@sha256:9cb60554716a0ab11a966e79ed65171e1bbf00b6d262ba12aa119bba22eb6000
+
+    db:
+      type: postgresdb
+
+    externalPostgresql:
+      host: n8n-postgres-rw
+      database: n8n
+      port: 5432
+      existingSecret: pg-secrets
+      existingSecretPasswordKey: password
+
+    redis:
+      enabled: false
+
+    externalRedis:
+      host: n8n-valkey
+      port: 6379
+
+    existingEncryptionKeySecret: n8n-secrets
+
+    # n8n listens on IPv6 by default since 2.x; set to IPv4 for probe compatibility
+    main:
+      extraEnvVars:
+        N8N_LISTEN_ADDRESS: "0.0.0.0"
+
+      persistence:
+        enabled: true
+        existingClaim: n8n-data
+        accessMode: ReadWriteMany
+        storageClass: longhorn
+
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 1000m
+          memory: 1Gi
+
+    worker:
+      mode: queue
+      count: 1
+
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 1000m
+          memory: 1Gi
+
+    webhook:
+      mode: queue
+      url: "https://n8n.${DOMAIN}"
+
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+
+    taskRunners:
+      mode: external
+
+    nodes:
+      python:
+        enabled: true
+
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      labels:
+        release: prometheus-operator
+      include:
+        defaultMetrics: true
+        queueMetrics: true
+
+    ingress:
+      enabled: false
+
+    podSecurityContext:
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: n8n-valkey
+  namespace: n8n
+spec:
+  interval: 24h0m0s
+  chart:
+    spec:
+      chart: valkey
+      sourceRef:
+        kind: HelmRepository
+        name: valkey
+        namespace: flux-system
+      version: 0.10.0
+  values:
+    fullnameOverride: n8n-valkey
+    image:
+      tag: 9.0.2-alpine3.23@sha256:68677f85c863830af7836ff07c4a13b7f085ebeff62f4dedb71499ca27d229f2
+    auth:
+      enabled: false
+    dataStorage:
+      enabled: true
+      requestedSize: 2Gi
+      className: longhorn-ephemeral
+    replica:
+      enabled: false
+    service:
+      type: ClusterIP
+      port: 6379
