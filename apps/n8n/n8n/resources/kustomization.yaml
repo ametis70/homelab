@@ -5,6 +5,7 @@ resources:
   - postgres-cluster.yaml
   - pvc.yaml
   - helm-release.yaml
+  - browserless.yaml
   - ingressroute.yaml
 
 components:
