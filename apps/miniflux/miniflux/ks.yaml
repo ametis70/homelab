@@ -1,0 +1,29 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: miniflux
+  namespace: flux-system
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 8m
+  path: ./apps/miniflux/miniflux/resources
+  prune: false
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: miniflux
+  dependsOn:
+    - name: external-secrets-cluster
+      namespace: external-secrets
+    - name: traefik
+      namespace: traefik
+    - name: cloudnative-pg-operator
+      namespace: cloudnative-pg
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+        optional: false

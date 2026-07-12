@@ -1,0 +1,28 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: miniflux-postgres
+  namespace: miniflux
+spec:
+  instances: 1
+
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.2
+  primaryUpdateStrategy: unsupervised
+
+  storage:
+    size: 5Gi
+
+  managed:
+    roles:
+      - name: miniflux
+        superuser: false
+        login: true
+
+  bootstrap:
+    initdb:
+      database: miniflux
+      owner: miniflux
+      secret:
+        name: pg-secrets
+      dataChecksums: true
