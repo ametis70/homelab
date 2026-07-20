@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: ghcr.io/sirrobot01/decypharr
-              tag: v2.3@sha256:94359465fb6337b2ab8168c6abdacf2a8fb60b6b009002ef1bbf3c466823ff31
+              tag: v2.4@sha256:d9df495fd156a379abd5b760ad54ed960881408599cd045c4d552a6d20bc7ce6
             env:
               TZ: "America/Argentina/Buenos_Aires"
               PUID: 568
