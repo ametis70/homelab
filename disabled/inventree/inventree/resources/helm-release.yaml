@@ -101,7 +101,7 @@ spec:
     image:
       repository: inventree/inventree
       pullPolicy: IfNotPresent
-      tag: "1.4.0"
+      tag: "1.4.2"
 
     serviceProxy:
       image: nginx
