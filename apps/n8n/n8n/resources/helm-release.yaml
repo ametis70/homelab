@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: community-charts
         namespace: flux-system
-      version: 1.24.8
+      version: 1.24.17
   valuesFrom:
     - kind: Secret
       name: pg-secrets
