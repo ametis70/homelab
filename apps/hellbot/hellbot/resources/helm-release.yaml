@@ -1,0 +1,49 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: hellbot
+  namespace: hellbot
+spec:
+  interval: 24h
+  chartRef:
+    kind: OCIRepository
+    name: hellbot
+    namespace: hellbot
+  values:
+    pollInterval: "60s"
+    timezone: "America/Argentina/Buenos_Aires"
+
+    store:
+      type: sqlite
+      sqlite:
+        persistence:
+          enabled: true
+          size: 10Mi
+
+    extraEnv:
+      - name: HELLBOT_CONFIG
+        value: /app/config.yml
+
+    notifiers:
+      - id: discord
+        type: discord
+        options:
+          token:
+            existingSecret: "hellbot-secrets"
+            existingSecretKey: "discord-token"
+          channel_id:
+            existingSecret: "hellbot-secrets"
+            existingSecretKey: "discord-channel-id"
+          guild_id:
+            existingSecret: "hellbot-secrets"
+            existingSecretKey: "discord-guild-id"
+      - id: telegram
+        type: telegram
+        options:
+          token:
+            existingSecret: "hellbot-secrets"
+            existingSecretKey: "telegram-token"
+          chat_id:
+            existingSecret: "hellbot-secrets"
+            existingSecretKey: "telegram-chat-id"

@@ -1,0 +1,20 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: hellbot
+  namespace: flux-system
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 8m
+  path: ./apps/hellbot/hellbot/resources
+  prune: false
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: hellbot
+  dependsOn:
+    - name: external-secrets-cluster
+      namespace: external-secrets
