@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-      version: 5.0.1
+      version: 5.1.0
   values:
     controllers:
       adguard-home:
