@@ -23,3 +23,7 @@ spec:
       owner: n8n
       secret:
         name: pg-secrets
+
+    recovery:
+      recoveryTarget:
+        backupID: 20260822T041504
