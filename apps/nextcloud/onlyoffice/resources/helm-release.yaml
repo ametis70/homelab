@@ -21,7 +21,7 @@ spec:
           app:
             image:
               repository: docker.io/library/rabbitmq
-              tag: 4.3.2@sha256:63a4b7bf7fb0b620b4e8ea69f6288462af55f80e97f59521f9011e7253ab3817
+              tag: 4.3.6@sha256:1c520731d8059f426afbfc28ddbe34713003b71e13bf42c703bea677acbaeb91
             probes:
               liveness:
                 enabled: true
