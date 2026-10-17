@@ -1,0 +1,50 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: amdgpu-device-plugin
+  namespace: amd-gpu
+  labels:
+    app.kubernetes.io/name: amdgpu-device-plugin
+    app.kubernetes.io/part-of: kserve
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: amdgpu-device-plugin
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: amdgpu-device-plugin
+    spec:
+      priorityClassName: system-node-critical
+      nodeSelector:
+        dedicated: ai
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: ai
+          effect: NoSchedule
+      containers:
+        - name: amdgpu-device-plugin
+          image: docker.io/rocm/k8s-device-plugin@sha256:3a800eabc28f0afd773297ef57c800bbd25e685529e7abbc5aa2084b6e79374e
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: device-plugins
+              mountPath: /var/lib/kubelet/device-plugins
+            - name: sys
+              mountPath: /sys
+              readOnly: true
+      volumes:
+        - name: device-plugins
+          hostPath:
+            path: /var/lib/kubelet/device-plugins
+            type: Directory
+        - name: sys
+          hostPath:
+            path: /sys
+            type: Directory

@@ -1,0 +1,27 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: kserve
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 10m
+  path: ./apps/ai/kserve/resources
+  prune: false
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: ai
+  dependsOn:
+    - name: cert-manager
+      namespace: cert-manager
+    - name: traefik
+      namespace: traefik
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+        optional: false

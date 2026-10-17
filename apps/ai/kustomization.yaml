@@ -8,3 +8,4 @@ components:
 
 resources:
   - ./openwebui/ks.yaml
+  - ./kserve/ks.yaml
