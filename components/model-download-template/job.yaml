@@ -1,0 +1,50 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ${MODEL_KEY}-download
+  namespace: ai
+  labels:
+    app.kubernetes.io/name: model-download
+    app.kubernetes.io/instance: ${MODEL_KEY}
+spec:
+  activeDeadlineSeconds: 3600
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: model-download
+        app.kubernetes.io/instance: ${MODEL_KEY}
+    spec:
+      restartPolicy: Never
+      nodeSelector:
+        dedicated: ai
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: ai
+          effect: NoSchedule
+      containers:
+        - name: download
+          image: kserve/storage-initializer:v0.20.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - ${HF_MODEL_URI}
+            - /models/${MODEL_KEY}
+          env:
+            - name: HF_HUB_DISABLE_TELEMETRY
+              value: "1"
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          volumeMounts:
+            - name: model-cache
+              mountPath: /models
+      volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: ai-model-cache

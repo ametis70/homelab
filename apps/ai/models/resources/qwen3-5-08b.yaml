@@ -1,0 +1,47 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: qwen3-5-08b-model-download
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 60m
+  path: ./apps/ai/models/resources/download-template
+  prune: false
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: ai
+  dependsOn:
+    - name: kserve
+  postBuild:
+    substitute:
+      MODEL_KEY: qwen3-5-08b-2fc06364
+      HF_MODEL_URI: hf://Qwen/Qwen3.5-0.8B:2fc06364715b967f1860aea9cf38778875588b17
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: qwen3-5-08b
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 60m
+  path: ./apps/ai/models/resources/inference-template
+  prune: false
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: ai
+  dependsOn:
+    - name: kserve
+    - name: qwen3-5-08b-model-download
+    - name: vllm-rocm-runtime
+  postBuild:
+    substitute:
+      MODEL_KEY: qwen3-5-08b-2fc06364

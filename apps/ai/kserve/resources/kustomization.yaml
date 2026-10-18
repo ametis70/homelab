@@ -6,3 +6,4 @@ resources:
   - kserve-crd-helmrelease.yaml
   - kserve-resources-oci.yaml
   - kserve-helmrelease.yaml
+  - model-cache-pvc.yaml

@@ -9,7 +9,12 @@ spec:
   timeout: 10m
   path: ./apps/ai/kserve/resources
   prune: false
-  wait: true
+  wait: false
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: kserve
+      namespace: ai
   sourceRef:
     kind: GitRepository
     name: flux-system

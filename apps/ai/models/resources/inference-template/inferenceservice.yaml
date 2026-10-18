@@ -1,0 +1,24 @@
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: ${MODEL_KEY}
+  namespace: ai
+spec:
+  predictor:
+    minReplicas: 1
+    model:
+      modelFormat:
+        name: vllm
+        version: "1"
+      runtime: vllm-rocm
+      storageUri: pvc://ai-model-cache/${MODEL_KEY}/
+      resources:
+        requests:
+          cpu: "2"
+          memory: 6Gi
+          amd.com/gpu: "1"
+        limits:
+          cpu: "4"
+          memory: 10Gi
+          amd.com/gpu: "1"

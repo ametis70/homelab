@@ -1,0 +1,73 @@
+---
+apiVersion: serving.kserve.io/v1alpha1
+kind: ClusterServingRuntime
+metadata:
+  name: vllm-rocm
+  annotations:
+    serving.kserve.io/server-type: vllm-rocm
+spec:
+  supportedModelFormats:
+    - name: vllm
+      version: "1"
+      autoSelect: false
+      priority: 1
+  containers:
+    - name: kserve-container
+      image: docker.io/rocm/vllm:rocm7.14.1_rdna_ubuntu24.04_py3.14_pytorch_2.11_vllm_0.23.0@sha256:19ad8dc5fb3012f2d5810995f73e8bf069302056d2b4aa6fdf2d2ae5fa9a68ab
+      imagePullPolicy: IfNotPresent
+      command:
+        - python
+        - -m
+        - vllm.entrypoints.openai.api_server
+      args:
+        - --port=8080
+        - --model=/mnt/models
+        - --served-model-name={{.Name}}
+        - --trust-remote-code
+        - --max-model-len=4096
+        - --gpu-memory-utilization=0.7
+        - --enforce-eager
+      env:
+        - name: HF_HOME
+          value: /tmp
+        - name: VLLM_CONFIG_ROOT
+          value: /tmp
+        - name: VLLM_WORKER_MULTIPROC_METHOD
+          value: spawn
+      ports:
+        - name: http1
+          containerPort: 8080
+          protocol: TCP
+      readinessProbe:
+        httpGet:
+          path: /v1/models
+          port: 8080
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+      startupProbe:
+        httpGet:
+          path: /v1/models
+          port: 8080
+        initialDelaySeconds: 30
+        periodSeconds: 30
+        timeoutSeconds: 10
+        failureThreshold: 60
+      resources:
+        requests:
+          cpu: "1"
+          memory: 2Gi
+      securityContext:
+        allowPrivilegeEscalation: false
+        privileged: false
+        capabilities:
+          drop:
+            - ALL
+      volumeMounts:
+        - name: devshm
+          mountPath: /dev/shm
+  volumes:
+    - name: devshm
+      emptyDir:
+        medium: Memory
+        sizeLimit: 2Gi
