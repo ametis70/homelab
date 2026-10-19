@@ -26,7 +26,7 @@ spec:
           effect: NoSchedule
       containers:
         - name: download
-          image: kserve/storage-initializer:v0.20.0
+          image: kserve/storage-initializer:v0.21.0
           imagePullPolicy: IfNotPresent
           args:
             - ${HF_MODEL_URI}
