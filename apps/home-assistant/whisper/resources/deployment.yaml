@@ -1,0 +1,57 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whisper
+  namespace: home-assistant
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: whisper
+  template:
+    metadata:
+      labels:
+        app: whisper
+    spec:
+      containers:
+        - name: whisper
+          image: rhasspy/wyoming-whisper:latest
+          args:
+            - --model
+            - base
+            - --language
+            - en
+            - --beam-size
+            - "1"
+          ports:
+            - containerPort: 10300
+              name: wyoming
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 1Gi
+          readinessProbe:
+            tcpSocket:
+              port: 10300
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 10300
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: whisper-cache
+              mountPath: /data
+      volumes:
+        - name: whisper-cache
+          emptyDir:
+            sizeLimit: 1Gi
