@@ -10,4 +10,5 @@ resources:
   - ./openwebui/ks.yaml
   - ./kserve/ks.yaml
   - ./vllm-rocm-runtime/ks.yaml
+  - ./llama-cpp-rocm-runtime/ks.yaml
   - ./models/ks.yaml

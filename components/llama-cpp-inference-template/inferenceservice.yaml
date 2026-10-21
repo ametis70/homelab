@@ -1,0 +1,40 @@
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: ${MODEL_KEY}
+  namespace: ai
+spec:
+  predictor:
+    minReplicas: 1
+    deploymentStrategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 0
+        maxUnavailable: 1
+    model:
+      modelFormat:
+        name: gguf
+        version: "1"
+      runtime: llama-cpp-rocm
+      storageUri: pvc://ai-model-cache/${MODEL_KEY}/
+      args:
+        - --model=/mnt/models/${MODEL_FILE}
+        - --mmproj=/mnt/models/${MMPROJ_FILE}
+        - --n-gpu-layers=all
+        - --ctx-size=${CONTEXT_SIZE}
+        - --parallel=1
+        - --alias=${SERVED_MODEL_NAME}
+      resources:
+        requests:
+          cpu: "${CPU_REQUEST}"
+          memory: "${MEMORY_REQUEST}"
+          amd.com/gpu: "1"
+          amd.com/gpumem: "${GPU_MEMORY_MIB}"
+          amd.com/gpucores: "${GPU_CORES_PERCENT}"
+        limits:
+          cpu: "${CPU_LIMIT}"
+          memory: "${MEMORY_LIMIT}"
+          amd.com/gpu: "1"
+          amd.com/gpumem: "${GPU_MEMORY_MIB}"
+          amd.com/gpucores: "${GPU_CORES_PERCENT}"
