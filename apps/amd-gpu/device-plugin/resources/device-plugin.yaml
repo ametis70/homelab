@@ -26,7 +26,7 @@ spec:
           effect: NoSchedule
       containers:
         - name: amdgpu-device-plugin
-          image: docker.io/rocm/k8s-device-plugin@sha256:3a800eabc28f0afd773297ef57c800bbd25e685529e7abbc5aa2084b6e79374e
+          image: docker.io/rocm/k8s-device-plugin@sha256:244933cc2d79dab392a6ae48826b43c83a514e1f6014b78922163cba03250a59
           imagePullPolicy: IfNotPresent
           securityContext:
             privileged: true
