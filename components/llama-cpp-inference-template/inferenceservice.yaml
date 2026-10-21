@@ -27,6 +27,10 @@ spec:
         - "${CONTEXT_SIZE}"
         - --parallel
         - "1"
+        - --cache-type-k
+        - ${KV_CACHE_TYPE_K}
+        - --cache-type-v
+        - ${KV_CACHE_TYPE_V}
         - --alias
         - ${SERVED_MODEL_NAME}
       resources:

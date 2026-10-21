@@ -3,5 +3,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: ai
 resources:
-  - gemma-4-e2b-it.yaml
-  - huggingface-token.yaml
+  - qwen3-5-4b.yaml
+  - ornith1.5-9b.yaml
+  - external-secrets.yaml
