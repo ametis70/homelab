@@ -1,0 +1,19 @@
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: huggingface-token
+  namespace: ai
+spec:
+  refreshInterval: 24h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: infisical
+  target:
+    name: huggingface-token
+    creationPolicy: Owner
+  data:
+    - secretKey: HF_TOKEN
+      remoteRef:
+        key: /ai/HF_TOKEN
+        optional: true

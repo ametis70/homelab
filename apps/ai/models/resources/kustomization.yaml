@@ -4,3 +4,4 @@ kind: Kustomization
 namespace: ai
 resources:
   - gemma-4-e2b-it.yaml
+  - huggingface-token.yaml

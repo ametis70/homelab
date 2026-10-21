@@ -34,6 +34,16 @@ spec:
           env:
             - name: HF_HUB_DISABLE_TELEMETRY
               value: "1"
+            - name: HF_HUB_DISABLE_XET
+              value: "1"
+            - name: STORAGE_ALLOW_PATTERNS
+              value: "${DOWNLOAD_ALLOW_PATTERNS}"
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: huggingface-token
+                  key: HF_TOKEN
+                  optional: true
           resources:
             requests:
               cpu: "${DOWNLOAD_CPU_REQUEST}"

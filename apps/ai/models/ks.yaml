@@ -8,7 +8,7 @@ spec:
   retryInterval: 2m
   timeout: 60m
   path: ./apps/ai/models/resources
-  prune: false
+  prune: true
   wait: true
   sourceRef:
     kind: GitRepository

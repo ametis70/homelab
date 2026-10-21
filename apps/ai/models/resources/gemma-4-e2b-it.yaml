@@ -21,6 +21,7 @@ spec:
     substitute:
       MODEL_KEY: gemma-4-e2b-it-qat-q4-0-675cff42
       MODEL_URI: https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-gguf/resolve/675cff42a74c774d6cb76f76d8eacb49b48c9b93/gemma-4-E2B_q4_0-it.gguf
+      DOWNLOAD_ALLOW_PATTERNS: ""
       DOWNLOAD_JOB_NAME: gemma-4-e2b-it-qat-q4-0-download-v2
       DOWNLOAD_CPU_REQUEST: 500m
       DOWNLOAD_CPU_LIMIT: "2"
