@@ -20,7 +20,6 @@ spec:
       storageUri: pvc://ai-model-cache/${MODEL_KEY}/
       args:
         - --model=/mnt/models/${MODEL_FILE}
-        - --mmproj=/mnt/models/${MMPROJ_FILE}
         - --n-gpu-layers=all
         - --ctx-size=${CONTEXT_SIZE}
         - --parallel=1

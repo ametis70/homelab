@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: ${MODEL_KEY}-download
+  name: ${DOWNLOAD_JOB_NAME}
   namespace: ai
   labels:
     app.kubernetes.io/name: model-download
@@ -29,18 +29,18 @@ spec:
           image: kserve/storage-initializer:v0.20.0
           imagePullPolicy: IfNotPresent
           args:
-            - ${HF_MODEL_URI}
+            - ${MODEL_URI}
             - /models/${MODEL_KEY}
           env:
             - name: HF_HUB_DISABLE_TELEMETRY
               value: "1"
           resources:
             requests:
-              cpu: 500m
-              memory: 512Mi
+              cpu: "${DOWNLOAD_CPU_REQUEST}"
+              memory: "${DOWNLOAD_MEMORY_REQUEST}"
             limits:
-              cpu: "2"
-              memory: 2Gi
+              cpu: "${DOWNLOAD_CPU_LIMIT}"
+              memory: "${DOWNLOAD_MEMORY_LIMIT}"
           volumeMounts:
             - name: model-cache
               mountPath: /models

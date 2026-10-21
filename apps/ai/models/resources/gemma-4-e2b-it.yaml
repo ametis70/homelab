@@ -8,7 +8,7 @@ spec:
   retryInterval: 2m
   timeout: 60m
   path: ./components/model-download-template
-  prune: false
+  prune: true
   wait: true
   sourceRef:
     kind: GitRepository
@@ -20,7 +20,12 @@ spec:
   postBuild:
     substitute:
       MODEL_KEY: gemma-4-e2b-it-qat-q4-0-675cff42
-      HF_MODEL_URI: hf://google/gemma-4-E2B-it-qat-q4_0-gguf:675cff42a74c774d6cb76f76d8eacb49b48c9b93
+      MODEL_URI: https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-gguf/resolve/675cff42a74c774d6cb76f76d8eacb49b48c9b93/gemma-4-E2B_q4_0-it.gguf
+      DOWNLOAD_JOB_NAME: gemma-4-e2b-it-qat-q4-0-download-v2
+      DOWNLOAD_CPU_REQUEST: 500m
+      DOWNLOAD_CPU_LIMIT: "2"
+      DOWNLOAD_MEMORY_REQUEST: 512Mi
+      DOWNLOAD_MEMORY_LIMIT: 2Gi
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -48,7 +53,6 @@ spec:
     substitute:
       MODEL_KEY: gemma-4-e2b-it-qat-q4-0-675cff42
       MODEL_FILE: gemma-4-E2B_q4_0-it.gguf
-      MMPROJ_FILE: gemma-4-E2B-it-mmproj.gguf
       SERVED_MODEL_NAME: gemma-4-e2b-it-q4_0
       CONTEXT_SIZE: "2048"
       CPU_REQUEST: 500m
