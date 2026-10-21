@@ -2,12 +2,42 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: gemma-4-e2b-it-model-download
+  name: ornith-1-5-9b-model-download
 spec:
   interval: 24h
   retryInterval: 2m
   timeout: 60m
   path: ./components/model-download-template
+  prune: true
+  force: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: ai
+  dependsOn:
+    - name: kserve
+  postBuild:
+    substitute:
+      MODEL_KEY: ornith-1-5-9b-q4-k-m-abdd624b
+      MODEL_URI: hf://ornith-ai/Ornith-1.5-9B-GGUF:abdd624b12ebf020b767fff532ff44fe552b28c3
+      DOWNLOAD_ALLOW_PATTERNS: Ornith-1.5-9B-Q4_K_M.gguf
+      DOWNLOAD_JOB_NAME: ornith-1-5-9b-q4-k-m-download-v1
+      DOWNLOAD_CPU_REQUEST: 500m
+      DOWNLOAD_CPU_LIMIT: "2"
+      DOWNLOAD_MEMORY_REQUEST: 512Mi
+      DOWNLOAD_MEMORY_LIMIT: 2Gi
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: ornith-1-5-9b
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 60m
+  path: ./components/llama-cpp-inference-template
   prune: true
   wait: true
   sourceRef:
@@ -17,48 +47,21 @@ spec:
   targetNamespace: ai
   dependsOn:
     - name: kserve
-  postBuild:
-    substitute:
-      MODEL_KEY: gemma-4-e2b-it-qat-q4-0-675cff42
-      MODEL_URI: https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-gguf/resolve/675cff42a74c774d6cb76f76d8eacb49b48c9b93/gemma-4-E2B_q4_0-it.gguf
-      DOWNLOAD_ALLOW_PATTERNS: ""
-      DOWNLOAD_JOB_NAME: gemma-4-e2b-it-qat-q4-0-download-v2
-      DOWNLOAD_CPU_REQUEST: 500m
-      DOWNLOAD_CPU_LIMIT: "2"
-      DOWNLOAD_MEMORY_REQUEST: 512Mi
-      DOWNLOAD_MEMORY_LIMIT: 2Gi
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: gemma-4-e2b-it
-spec:
-  interval: 24h
-  retryInterval: 2m
-  timeout: 60m
-  path: ./components/llama-cpp-inference-template
-  prune: false
-  wait: true
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-    namespace: flux-system
-  targetNamespace: ai
-  dependsOn:
-    - name: kserve
-    - name: gemma-4-e2b-it-model-download
+    - name: ornith-1-5-9b-model-download
     - name: llama-cpp-rocm-runtime
     - name: amd-gpu-hami
       namespace: amd-gpu
   postBuild:
     substitute:
-      MODEL_KEY: gemma-4-e2b-it-qat-q4-0-675cff42
-      MODEL_FILE: gemma-4-E2B_q4_0-it.gguf
-      SERVED_MODEL_NAME: gemma-4-e2b-it-q4_0
-      CONTEXT_SIZE: '"2048"'
+      MODEL_KEY: ornith-1-5-9b-q4-k-m-abdd624b
+      MODEL_FILE: Ornith-1.5-9B-Q4_K_M.gguf
+      SERVED_MODEL_NAME: ornith-1.5-9b-q4_k_m
+      CONTEXT_SIZE: '"131072"'
+      KV_CACHE_TYPE_K: q4_0
+      KV_CACHE_TYPE_V: q4_0
       CPU_REQUEST: 500m
       CPU_LIMIT: "2"
-      MEMORY_REQUEST: 3Gi
-      MEMORY_LIMIT: 6Gi
-      GPU_MEMORY_MIB: "8192"
+      MEMORY_REQUEST: 4Gi
+      MEMORY_LIMIT: 8Gi
+      GPU_MEMORY_MIB: "10240"
       GPU_CORES_PERCENT: "50"
