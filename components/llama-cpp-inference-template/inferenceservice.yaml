@@ -19,11 +19,16 @@ spec:
       runtime: llama-cpp-rocm
       storageUri: pvc://ai-model-cache/${MODEL_KEY}/
       args:
-        - --model=/mnt/models/${MODEL_FILE}
-        - --n-gpu-layers=all
-        - --ctx-size=${CONTEXT_SIZE}
-        - --parallel=1
-        - --alias=${SERVED_MODEL_NAME}
+        - --model
+        - /mnt/models/${MODEL_FILE}
+        - --n-gpu-layers
+        - all
+        - --ctx-size
+        - "${CONTEXT_SIZE}"
+        - --parallel
+        - "1"
+        - --alias
+        - ${SERVED_MODEL_NAME}
       resources:
         requests:
           cpu: "${CPU_REQUEST}"

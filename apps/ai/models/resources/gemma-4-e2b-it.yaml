@@ -54,7 +54,7 @@ spec:
       MODEL_KEY: gemma-4-e2b-it-qat-q4-0-675cff42
       MODEL_FILE: gemma-4-E2B_q4_0-it.gguf
       SERVED_MODEL_NAME: gemma-4-e2b-it-q4_0
-      CONTEXT_SIZE: "2048"
+      CONTEXT_SIZE: '"2048"'
       CPU_REQUEST: 500m
       CPU_LIMIT: "2"
       MEMORY_REQUEST: 3Gi
