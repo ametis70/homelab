@@ -7,6 +7,11 @@ metadata:
 spec:
   predictor:
     minReplicas: 1
+    deploymentStrategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 0
+        maxUnavailable: 1
     model:
       modelFormat:
         name: vllm
@@ -22,7 +27,11 @@ spec:
           cpu: "${CPU_REQUEST}"
           memory: "${MEMORY_REQUEST}"
           amd.com/gpu: "1"
+          amd.com/gpumem: "${GPU_MEMORY_MIB}"
+          amd.com/gpucores: "${GPU_CORES_PERCENT}"
         limits:
           cpu: "${CPU_LIMIT}"
           memory: "${MEMORY_LIMIT}"
           amd.com/gpu: "1"
+          amd.com/gpumem: "${GPU_MEMORY_MIB}"
+          amd.com/gpucores: "${GPU_CORES_PERCENT}"

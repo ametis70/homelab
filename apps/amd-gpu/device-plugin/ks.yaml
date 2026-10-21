@@ -8,7 +8,7 @@ spec:
   retryInterval: 2m
   timeout: 5m
   path: ./apps/amd-gpu/device-plugin/resources
-  prune: false
+  prune: true
   wait: true
   sourceRef:
     kind: GitRepository

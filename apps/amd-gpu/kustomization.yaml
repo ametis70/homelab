@@ -8,3 +8,4 @@ components:
 
 resources:
   - ./device-plugin/ks.yaml
+  - ./hami/ks.yaml
