@@ -21,7 +21,7 @@ spec:
           image: rhasspy/wyoming-whisper:latest
           args:
             - --model
-            - base
+            - small
             - --language
             - en
             - --beam-size
@@ -32,10 +32,10 @@ spec:
           resources:
             requests:
               cpu: 500m
-              memory: 512Mi
+              memory: 1Gi
             limits:
               cpu: "2"
-              memory: 1Gi
+              memory: 2Gi
           readinessProbe:
             tcpSocket:
               port: 10300
