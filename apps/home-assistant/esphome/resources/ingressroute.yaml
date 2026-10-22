@@ -1,0 +1,19 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: esphome-ingress
+  namespace: home-assistant
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: "Host(`esphome.${DOMAIN}`)"
+      priority: 10
+      services:
+        - name: esphome
+          port: 6052
+      middlewares:
+        - name: authentik
+          namespace: authentik

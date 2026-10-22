@@ -8,6 +8,7 @@ components:
 
 resources:
   - ./home-assistant/ks.yaml
+  - ./esphome/ks.yaml
   - ./whisper/ks.yaml
   - ./piper/ks.yaml
   - ./openwakeword/ks.yaml
