@@ -1,0 +1,16 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: music-assistant-ingress
+  namespace: home-assistant
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: "Host(`music-assistant.${DOMAIN}`)"
+      priority: 10
+      services:
+        - name: music-assistant
+          port: 8095

@@ -11,9 +11,6 @@ spec:
       "master": "vlan20",
       "mode": "bridge",
       "ipam": {
-        "type": "static",
-        "addresses": [
-          { "address": "10.0.20.10/24" }
-        ]
+        "type": "dhcp"
       }
     }
