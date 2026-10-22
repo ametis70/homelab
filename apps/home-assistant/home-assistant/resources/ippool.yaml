@@ -1,0 +1,9 @@
+---
+apiVersion: whereabouts.cni.cncf.io/v1alpha1
+kind: IPPool
+metadata:
+  name: 10.0.20.0-27
+  namespace: home-assistant
+spec:
+  allocations: {}
+  range: 10.0.20.0/27
