@@ -1,0 +1,24 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: music-assistant
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 8m
+  path: ./apps/home-assistant/music-assistant/resources
+  prune: false
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: home-assistant
+  dependsOn:
+    - name: home-assistant
+      namespace: home-assistant
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+        optional: false

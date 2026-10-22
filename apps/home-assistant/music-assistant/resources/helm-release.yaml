@@ -1,0 +1,97 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  namespace: home-assistant
+  name: music-assistant
+spec:
+  interval: 24h0m0s
+  chart:
+    spec:
+      chart: app-template
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      version: 5.0.1
+  values:
+    controllers:
+      music-assistant:
+        pod:
+          annotations:
+            k8s.v1.cni.cncf.io/networks: iot-vlan20
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            fsGroup: 65534
+            fsGroupChangePolicy: OnRootMismatch
+        initContainers:
+          add-routes:
+            image:
+              repository: busybox
+              tag: latest
+            command:
+              - /bin/sh
+              - -c
+              - ip route add 10.0.10.0/24 via 10.0.20.1 dev net1
+            securityContext:
+              runAsUser: 0
+              runAsNonRoot: false
+              privileged: false
+              capabilities:
+                add:
+                  - NET_ADMIN
+        containers:
+          app:
+            image:
+              repository: ghcr.io/music-assistant/server
+              tag: latest
+            env:
+              TZ: "America/Argentina/Buenos_Aires"
+            securityContext:
+              privileged: false
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop:
+                  - ALL
+                add:
+                  - NET_ADMIN
+                  - NET_RAW
+                  - NET_BROADCAST
+            resources:
+              requests:
+                cpu: 250m
+                memory: 256Mi
+              limits:
+                cpu: 1000m
+                memory: 1Gi
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 8095
+                  initialDelaySeconds: 60
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 3
+              readiness: *probes
+    service:
+      app:
+        controller: music-assistant
+        ports:
+          http:
+            port: *port
+          stream:
+            port: 8097
+    persistence:
+      data:
+        enabled: true
+        type: persistentVolumeClaim
+        existingClaim: music-assistant-data
+        globalMounts:
+          - path: /data
