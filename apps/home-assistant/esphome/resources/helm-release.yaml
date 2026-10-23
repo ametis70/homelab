@@ -31,6 +31,7 @@ spec:
               tag: latest
             env:
               TZ: "America/Argentina/Buenos_Aires"
+              UV_CACHE_DIR: /config/.cache/uv
             securityContext:
               privileged: false
               allowPrivilegeEscalation: false
@@ -44,7 +45,7 @@ spec:
                 memory: 256Mi
               limits:
                 cpu: 1000m
-                memory: 512Mi
+                memory: 4Gi
             probes:
               liveness: &probes
                 enabled: true
