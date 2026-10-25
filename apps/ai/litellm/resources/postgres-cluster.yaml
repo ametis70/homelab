@@ -1,0 +1,27 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: litellm-postgres
+  namespace: ai
+spec:
+  instances: 1
+
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.2
+  primaryUpdateStrategy: unsupervised
+
+  storage:
+    size: 1Gi
+
+  managed:
+    roles:
+      - name: litellm
+        superuser: true
+        login: true
+
+  bootstrap:
+    initdb:
+      database: litellm
+      owner: litellm
+      secret:
+        name: litellm-pg-secrets
+      dataChecksums: true

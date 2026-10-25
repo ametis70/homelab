@@ -1,0 +1,87 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  namespace: ai
+  name: litellm
+spec:
+  interval: 24h
+  chartRef:
+    kind: OCIRepository
+    name: litellm
+  values:
+    replicaCount: 1
+
+    image:
+      repository: ghcr.io/berriai/litellm
+      tag: v1.90.2
+
+    # Postgres database configuration
+    db:
+      useExisting: true
+      deployStandalone: false
+      endpoint: "litellm-postgres-rw.ai.svc.cluster.local"
+      port: 5432
+      database: litellm
+      secret:
+        name: litellm-pg-secrets
+        usernameKey: username
+        passwordKey: password
+
+    # Master key from secret
+    masterkeySecretName: litellm-secrets
+    masterkeySecretKey: LITELLM_MASTER_KEY
+
+    # Additional environment variables from secrets
+    environmentSecrets:
+      - litellm-secrets
+
+    # Resource limits (minimal)
+    resources:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 2Gi
+
+    # Config for liteLLM proxy
+    proxy_config:
+      # Basic model list - can be extended via Admin UI or config
+      model_list: []
+      router_settings:
+        # Enable cost tracking
+        enable_cost: true
+        # Retry logic
+        num_retries: 0
+        # Timeout for model calls
+        timeout: 600
+
+    # Health checks
+    livenessProbe:
+      enabled: true
+      httpGet:
+        path: /health/liveliness
+        port: 4000
+      initialDelaySeconds: 60
+      periodSeconds: 30
+      timeoutSeconds: 5
+
+    readinessProbe:
+      enabled: true
+      httpGet:
+        path: /health/readiness
+        port: 4000
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+
+    # Service configuration
+    service:
+      type: ClusterIP
+      port: 4000
+      targetPort: 4000
+
+    # Disable schema updates on proxy pods (migrations run separately)
+    env:
+      DISABLE_SCHEMA_UPDATE: "true"
+      STORE_MODEL_IN_DB: "true"

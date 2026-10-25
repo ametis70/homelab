@@ -12,3 +12,4 @@ resources:
   - ./vllm-rocm-runtime/ks.yaml
   - ./llama-cpp-rocm-runtime/ks.yaml
   - ./models/ks.yaml
+  - ./litellm/ks.yaml
