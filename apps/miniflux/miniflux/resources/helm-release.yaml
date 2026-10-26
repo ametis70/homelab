@@ -23,7 +23,7 @@ spec:
           app:
             image:
               repository: miniflux/miniflux
-              tag: "2.3.2@sha256:cd353a6af9ce663291f405eddef26fa0d567f486b521c5d34e3fb50e41938b9a"
+              tag: "2.3.4@sha256:72e49f513a63104506aab98ba8cfc3a409d4fde23550a583dec07ec941f1e94e"
             env:
               TZ: "America/Argentina/Buenos_Aires"
               RUN_MIGRATIONS: "1"
