@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: ghcr.io/home-operations/qbittorrent
-              tag: 5.2.2@sha256:24f2d793cb7f7a93e755e5d22e533be818e62eadc864f4a82315b901b6ffe807
+              tag: 5.3.0@sha256:5a858e61f94cf2712391db32ed03556576c700858f3e62c4c6fcde262443ebd8
             probes:
               liveness: &probes
                 enabled: true
