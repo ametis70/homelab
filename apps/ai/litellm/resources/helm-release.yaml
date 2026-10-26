@@ -13,9 +13,8 @@ spec:
 
     image:
       repository: ghcr.io/berriai/litellm
-      tag: v1.90.2
+      tag: v1.106.1
 
-    # Postgres database configuration
     db:
       useExisting: true
       deployStandalone: false
@@ -27,15 +26,12 @@ spec:
         usernameKey: username
         passwordKey: password
 
-    # Master key from secret
     masterkeySecretName: litellm-secrets
     masterkeySecretKey: LITELLM_MASTER_KEY
 
-    # Additional environment variables from secrets
     environmentSecrets:
       - litellm-secrets
 
-    # Resource limits (minimal)
     resources:
       requests:
         cpu: 100m
@@ -44,19 +40,15 @@ spec:
         cpu: 500m
         memory: 2Gi
 
-    # Config for liteLLM proxy
     proxy_config:
-      # Basic model list - can be extended via Admin UI or config
       model_list: []
+      general_settings:
+        disable_env_credential_login: true
       router_settings:
-        # Enable cost tracking
         enable_cost: true
-        # Retry logic
         num_retries: 0
-        # Timeout for model calls
         timeout: 600
 
-    # Health checks
     livenessProbe:
       enabled: true
       httpGet:
@@ -75,13 +67,11 @@ spec:
       periodSeconds: 10
       timeoutSeconds: 5
 
-    # Service configuration
     service:
       type: ClusterIP
       port: 4000
       targetPort: 4000
 
-    # Disable schema updates on proxy pods (migrations run separately)
     env:
       DISABLE_SCHEMA_UPDATE: "true"
       STORE_MODEL_IN_DB: "true"
