@@ -4,9 +4,11 @@ kind: InferenceService
 metadata:
   name: ${MODEL_KEY}
   namespace: ai
+  annotations:
+    serving.kserve.io/autoscalerClass: "${AUTOSCALER_CLASS}"
 spec:
   predictor:
-    minReplicas: 1
+    minReplicas: ${MIN_REPLICAS}
     deploymentStrategy:
       type: RollingUpdate
       rollingUpdate:

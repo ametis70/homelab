@@ -11,5 +11,6 @@ resources:
   - ./kserve/ks.yaml
   - ./vllm-rocm-runtime/ks.yaml
   - ./llama-cpp-rocm-runtime/ks.yaml
+  - ./whisper-cpp-rocm-runtime/ks.yaml
   - ./models/ks.yaml
   - ./litellm/ks.yaml

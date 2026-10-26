@@ -1,0 +1,56 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: whisper-large-v3-turbo-model-download
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 60m
+  path: ./components/model-download-template
+  prune: true
+  force: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: ai
+  dependsOn:
+    - name: kserve
+  postBuild:
+    substitute:
+      MODEL_KEY: whisper-large-v3-turbo-5359861c
+      MODEL_URI: hf://ggerganov/whisper.cpp:5359861c739e955e79d9a303bcbc70fb988958b1
+      DOWNLOAD_ALLOW_PATTERNS: ggml-large-v3-turbo.bin
+      DOWNLOAD_JOB_NAME: whisper-large-v3-turbo-download-v1
+      DOWNLOAD_CPU_REQUEST: 500m
+      DOWNLOAD_CPU_LIMIT: "2"
+      DOWNLOAD_MEMORY_REQUEST: 512Mi
+      DOWNLOAD_MEMORY_LIMIT: 2Gi
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: whisper-large-v3-turbo
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 60m
+  path: ./components/whisper-cpp-inference-template
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: ai
+  dependsOn:
+    - name: kserve
+    - name: whisper-large-v3-turbo-model-download
+    - name: whisper-cpp-rocm-runtime
+    - name: amd-gpu-hami
+      namespace: amd-gpu
+  postBuild:
+    substitute:
+      MODEL_KEY: whisper-large-v3-turbo-5359861c

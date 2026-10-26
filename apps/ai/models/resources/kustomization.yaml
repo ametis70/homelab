@@ -5,4 +5,5 @@ namespace: ai
 resources:
   - qwen3-5-4b.yaml
   - ornith1.5-9b.yaml
+  - whisper-large-v3-turbo.yaml
   - external-secrets.yaml
