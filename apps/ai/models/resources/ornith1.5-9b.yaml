@@ -55,13 +55,15 @@ spec:
     substitute:
       MODEL_KEY: ornith-1-5-9b-q4-k-m-abdd624b
       MODEL_FILE: Ornith-1.5-9B-Q4_K_M.gguf
+      MIN_REPLICAS: "0"
+      AUTOSCALER_CLASS: none
       SERVED_MODEL_NAME: ornith-1.5-9b-q4_k_m
-      CONTEXT_SIZE: '"131072"'
+      CONTEXT_SIZE: '"262144"'
       KV_CACHE_TYPE_K: q4_0
       KV_CACHE_TYPE_V: q4_0
       CPU_REQUEST: 500m
       CPU_LIMIT: "2"
       MEMORY_REQUEST: 4Gi
       MEMORY_LIMIT: 8Gi
-      GPU_MEMORY_MIB: "10240"
+      GPU_MEMORY_MIB: "7578"
       GPU_CORES_PERCENT: "50"

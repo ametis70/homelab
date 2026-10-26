@@ -58,13 +58,15 @@ spec:
     substitute:
       MODEL_KEY: qwen3-5-4b-q4-k-m-e87f1764
       MODEL_FILE: Qwen3.5-4B-Q4_K_M.gguf
+      MIN_REPLICAS: "1"
+      AUTOSCALER_CLASS: hpa
       SERVED_MODEL_NAME: qwen3.5-4b-q4_k_m
-      CONTEXT_SIZE: '"8192"'
+      CONTEXT_SIZE: '"16384"'
       KV_CACHE_TYPE_K: q4_0
       KV_CACHE_TYPE_V: q4_0
       CPU_REQUEST: 500m
       CPU_LIMIT: "2"
       MEMORY_REQUEST: 3Gi
       MEMORY_LIMIT: 6Gi
-      GPU_MEMORY_MIB: "5120"
-      GPU_CORES_PERCENT: "50"
+      GPU_MEMORY_MIB: "3272"
+      GPU_CORES_PERCENT: "20"

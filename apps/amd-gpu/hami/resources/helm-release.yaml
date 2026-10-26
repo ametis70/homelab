@@ -43,7 +43,7 @@ spec:
         namespace: flux-system
   values:
     # Radeon/RDNA support is experimental in HAMi's AMD plugin. This device is gfx1200;
-    # splitCount=2 enables two software vGPU slots, not hardware partitions.
+    # splitCount=5 enables five software vGPU slots, not hardware partitions.
     node_selector_enabled: true
     node_selector:
       dedicated: ai
@@ -57,7 +57,7 @@ spec:
         repository: ghcr.io/project-hami/amd-device-plugin
         tag: 0.0.3
       operatingMode: cu
-      splitCount: 2
+      splitCount: 5
       reportNodeCapacity: true
       hookInstaller:
         enabled: true
