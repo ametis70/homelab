@@ -1,0 +1,93 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: audio-cpp-kserve-runtime
+  namespace: ai
+data:
+  start-audiocpp.sh: |
+    #!/bin/bash
+    set -euo pipefail
+
+    runtime=/models/audio-cpp-runtime
+    mkdir -p "$runtime/bin"
+    exec 9>"$runtime/.prepare.lock"
+    flock 9
+    if [ ! -x "$runtime/bin/audiocpp_server" ]; then
+      python3 - <<'PY'
+    import hashlib
+    import urllib.request
+    from pathlib import Path
+
+    url = "https://github.com/0xShug0/audio.cpp/releases/download/v0.9.3/audio-v0.9.3-bin-ubuntu-x64-rocm10.0.0-test.tar.gz"
+    archive = Path("/tmp/audio-cpp-rocm.tar.gz")
+    expected = "4d0688267b2b8c421238994031c720d52316cacc24150ea613ee6bb2e5b13dfc"
+    digest = hashlib.sha256()
+    with urllib.request.urlopen(url) as source, archive.open("wb") as target:
+        while chunk := source.read(1024 * 1024):
+            target.write(chunk)
+            digest.update(chunk)
+    if digest.hexdigest() != expected:
+        raise SystemExit("audio.cpp release checksum mismatch")
+    print("Verified audio.cpp v0.9.3 ROCm release checksum", flush=True)
+    PY
+      tar --no-same-owner -xzf /tmp/audio-cpp-rocm.tar.gz -C "$runtime/bin"
+      chmod +x "$runtime/bin/audiocpp_server"
+    fi
+
+    espeak="$runtime/espeak"
+    if [ ! -e "$espeak/usr/lib/x86_64-linux-gnu/libespeak-ng.so.1" ]; then
+      apt-get update -y
+      DEBIAN_FRONTEND=noninteractive apt-get install --download-only -y --no-install-recommends libespeak-ng1
+      mkdir -p "$espeak"
+      for package in /var/cache/apt/archives/*.deb; do
+        dpkg-deb -x "$package" "$espeak"
+      done
+    fi
+    test -e "$espeak/usr/lib/x86_64-linux-gnu/libespeak-ng.so.1"
+    test -d "$espeak/usr/lib/x86_64-linux-gnu/espeak-ng-data"
+    flock -u 9
+    exec 9>&-
+
+    : "${AUDIOCPP_MODEL_ID:?missing AUDIOCPP_MODEL_ID}"
+    : "${AUDIOCPP_MODEL_FAMILY:?missing AUDIOCPP_MODEL_FAMILY}"
+    : "${AUDIOCPP_MODEL_TASK:?missing AUDIOCPP_MODEL_TASK}"
+    : "${AUDIOCPP_MODEL_FILE:?missing AUDIOCPP_MODEL_FILE}"
+    model_path="/mnt/models/${AUDIOCPP_MODEL_FILE}"
+    test -s "$model_path"
+
+    python3 - <<'PY'
+    import json
+    import os
+    from pathlib import Path
+
+    model = {
+        "id": os.environ["AUDIOCPP_MODEL_ID"],
+        "family": os.environ["AUDIOCPP_MODEL_FAMILY"],
+        "path": "/mnt/models/" + os.environ["AUDIOCPP_MODEL_FILE"],
+        "task": os.environ["AUDIOCPP_MODEL_TASK"],
+        "mode": "offline",
+    }
+    voice = os.environ.get("AUDIOCPP_DEFAULT_VOICE")
+    if voice:
+        model["default_voice_preset"] = {"voice_id": voice}
+        model["voice_presets"] = {
+            "af_heart": {"voice_id": "af_heart"},
+            "ef_dora": {"voice_id": "ef_dora"},
+        }
+    config = {
+        "host": "0.0.0.0",
+        "port": 8080,
+        "backend": "hip",
+        "device": 0,
+        "threads": 4,
+        "lazy_load": False,
+        "max_loaded_models": 1,
+        "models": [model],
+    }
+    Path("/tmp/server.json").write_text(json.dumps(config))
+    PY
+
+    export LD_LIBRARY_PATH="$espeak/usr/lib/x86_64-linux-gnu/pulseaudio:$espeak/usr/lib/x86_64-linux-gnu:/opt/rocm/lib:${LD_LIBRARY_PATH:-}"
+    export ESPEAK_DATA_PATH="$espeak/usr/lib/x86_64-linux-gnu/espeak-ng-data"
+    exec "$runtime/bin/audiocpp_server" --config /tmp/server.json --backend hip --no-ui --log

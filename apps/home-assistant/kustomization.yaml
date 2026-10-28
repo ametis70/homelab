@@ -10,7 +10,5 @@ resources:
   - ./home-assistant/ks.yaml
   - ./esphome/ks.yaml
   - ./music-assistant/ks.yaml
-  - ./whisper/ks.yaml
-  - ./piper/ks.yaml
   - ./openwakeword/ks.yaml
   - ./wyoming-openai/ks.yaml

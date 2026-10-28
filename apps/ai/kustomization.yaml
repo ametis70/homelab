@@ -13,5 +13,6 @@ resources:
   - ./llama-cpp-rocm-runtime/ks.yaml
   - ./whisper-cpp-rocm-runtime/ks.yaml
   - ./audio-cpp/ks.yaml
+  - ./audio-cpp-rocm-runtime/ks.yaml
   - ./models/ks.yaml
   - ./litellm/ks.yaml
