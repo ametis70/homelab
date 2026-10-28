@@ -1,0 +1,158 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audio-cpp
+  namespace: ai
+  labels:
+    app.kubernetes.io/name: audio-cpp
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: audio-cpp
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: audio-cpp
+    spec:
+      terminationGracePeriodSeconds: 30
+      nodeSelector:
+        dedicated: ai
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: ai
+          effect: NoSchedule
+      initContainers:
+        - name: prepare-runtime
+          image: rocm/pytorch:rocm7.2.3_ubuntu24.04_py3.12_pytorch_release_2.9.1
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash", "-ec"]
+          args:
+            - |
+              set -euo pipefail
+              runtime=/models/audio-cpp-runtime
+              mkdir -p "$runtime/bin"
+              if [ ! -x "$runtime/bin/audiocpp_server" ]; then
+                python3 - <<'PY'
+              import hashlib
+              import urllib.request
+              from pathlib import Path
+              url = "https://github.com/0xShug0/audio.cpp/releases/download/v0.9.3/audio-v0.9.3-bin-ubuntu-x64-rocm10.0.0-test.tar.gz"
+              archive = Path("/tmp/audio-cpp-rocm.tar.gz")
+              expected = "4d0688267b2b8c421238994031c720d52316cacc24150ea613ee6bb2e5b13dfc"
+              digest = hashlib.sha256()
+              with urllib.request.urlopen(url) as source, archive.open("wb") as target:
+                  while chunk := source.read(1024 * 1024):
+                      target.write(chunk)
+                      digest.update(chunk)
+              if digest.hexdigest() != expected:
+                  raise SystemExit("audio.cpp release checksum mismatch")
+              print("Verified audio.cpp v0.9.3 ROCm release checksum", flush=True)
+              PY
+                tar --no-same-owner -xzf /tmp/audio-cpp-rocm.tar.gz -C "$runtime/bin"
+                chmod +x "$runtime/bin/audiocpp_server"
+                test -x "$runtime/bin/audiocpp_server"
+              fi
+              espeak="$runtime/espeak"
+              if [ ! -e "$espeak/usr/lib/x86_64-linux-gnu/libespeak-ng.so.1" ]; then
+                apt-get update -y
+                DEBIAN_FRONTEND=noninteractive apt-get install --download-only -y --no-install-recommends libespeak-ng1
+                mkdir -p "$espeak"
+                for package in /var/cache/apt/archives/*.deb; do
+                  dpkg-deb -x "$package" "$espeak"
+                done
+              fi
+              test -e "$espeak/usr/lib/x86_64-linux-gnu/libespeak-ng.so.1"
+              test -d "$espeak/usr/lib/x86_64-linux-gnu/espeak-ng-data"
+              for attempt in $(seq 1 360); do
+                if [ -s /models/audio-cpp/kokoro-82m-q8_0.gguf ] && [ -s /models/audio-cpp/qwen3-asr-0.6b-q8_0.gguf ]; then
+                  echo "audio.cpp runtime, eSpeak-ng assets, and model weights are ready"
+                  exit 0
+                fi
+                echo "Waiting for audio.cpp model download to finish"
+                sleep 10
+              done
+              echo "Timed out waiting for audio.cpp model downloads" >&2
+              exit 1
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          volumeMounts:
+            - name: model-cache
+              mountPath: /models
+      containers:
+        - name: audio-cpp
+          image: rocm/pytorch:rocm7.2.3_ubuntu24.04_py3.12_pytorch_release_2.9.1
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash", "-ec"]
+          args:
+            - |
+              export LD_LIBRARY_PATH="/models/audio-cpp-runtime/espeak/usr/lib/x86_64-linux-gnu/pulseaudio:/models/audio-cpp-runtime/espeak/usr/lib/x86_64-linux-gnu:/opt/rocm/lib:${LD_LIBRARY_PATH:-}"
+              export ESPEAK_DATA_PATH="/models/audio-cpp-runtime/espeak/usr/lib/x86_64-linux-gnu/espeak-ng-data"
+              exec /models/audio-cpp-runtime/bin/audiocpp_server --config /config/server.json --backend hip --no-ui --log
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 500m
+              memory: 2Gi
+              amd.com/gpu: "1"
+              amd.com/gpumem: "4096"
+              amd.com/gpucores: "30"
+            limits:
+              cpu: "3"
+              memory: 4Gi
+              amd.com/gpu: "1"
+              amd.com/gpumem: "4096"
+              amd.com/gpucores: "30"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 5
+            failureThreshold: 24
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            - name: model-cache
+              mountPath: /models
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: ai-model-cache
+        - name: config
+          configMap:
+            name: audio-cpp-config
+        - name: tmp
+          emptyDir:
+            sizeLimit: 4Gi

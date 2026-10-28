@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: audio-cpp-config
+  namespace: ai
+data:
+  server.json: |
+    {
+      "host": "0.0.0.0",
+      "port": 8080,
+      "backend": "hip",
+      "device": 0,
+      "threads": 4,
+      "lazy_load": true,
+      "max_loaded_models": 2,
+      "models": [
+        {
+          "id": "kokoro-tts",
+          "family": "kokoro_tts",
+          "path": "/models/audio-cpp/kokoro-82m-q8_0.gguf",
+          "task": "tts",
+          "mode": "offline",
+          "default_voice_preset": {"voice_id": "af_heart"},
+          "voice_presets": {
+            "af_heart": {"voice_id": "af_heart"},
+            "ef_dora": {"voice_id": "ef_dora"}
+          }
+        },
+        {
+          "id": "qwen3-asr",
+          "family": "qwen3_asr",
+          "path": "/models/audio-cpp/qwen3-asr-0.6b-q8_0.gguf",
+          "task": "asr",
+          "mode": "offline"
+        }
+      ]
+    }

@@ -1,0 +1,21 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: audio-cpp
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 60m
+  path: ./apps/ai/audio-cpp/resources
+  prune: false
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: ai
+  dependsOn:
+    - name: kserve
+    - name: amd-gpu-hami
+      namespace: amd-gpu
