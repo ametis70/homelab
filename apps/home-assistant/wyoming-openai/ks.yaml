@@ -17,3 +17,7 @@ spec:
   dependsOn:
     - name: home-assistant
       namespace: home-assistant
+    - name: audio-cpp-kokoro-tts
+      namespace: ai
+    - name: audio-cpp-qwen3-asr
+      namespace: ai
