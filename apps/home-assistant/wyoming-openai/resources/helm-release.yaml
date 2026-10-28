@@ -26,10 +26,10 @@ spec:
               WYOMING_URI: tcp://0.0.0.0:10300
               WYOMING_LOG_LEVEL: INFO
               WYOMING_LANGUAGES: "en es"
-              STT_OPENAI_URL: http://audio-cpp.ai.svc.cluster.local:8080/v1
+              STT_OPENAI_URL: http://audio-cpp-qwen3-asr-predictor.ai.svc.cluster.local/v1
               STT_MODELS: qwen3-asr
               STT_BACKEND: OPENAI
-              TTS_OPENAI_URL: http://audio-cpp.ai.svc.cluster.local:8080/v1
+              TTS_OPENAI_URL: http://audio-cpp-kokoro-tts-predictor.ai.svc.cluster.local/v1
               TTS_MODELS: kokoro-tts
               TTS_BACKEND: OPENAI
               TTS_VOICES: "af_heart ef_dora"
