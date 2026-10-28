@@ -1,0 +1,69 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: audio-cpp-kokoro-tts-model-download
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 60m
+  path: ./components/model-download-template
+  prune: true
+  force: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: ai
+  dependsOn:
+    - name: kserve
+  postBuild:
+    substitute:
+      MODEL_KEY: audio-cpp-kokoro-82m-q8-874fcb41
+      MODEL_URI: hf://audio-cpp/audio.cpp-gguf:874fcb41ececda20bcbc0782d6b4ea7f7d069ea8
+      DOWNLOAD_ALLOW_PATTERNS: Kokoro-82M-GGUF/kokoro-82m-q8_0.gguf
+      DOWNLOAD_JOB_NAME: audio-cpp-kokoro-82m-q8-download-v1
+      DOWNLOAD_CPU_REQUEST: 250m
+      DOWNLOAD_CPU_LIMIT: "2"
+      DOWNLOAD_MEMORY_REQUEST: 512Mi
+      DOWNLOAD_MEMORY_LIMIT: 2Gi
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: audio-cpp-kokoro-tts
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 60m
+  path: ./components/audio-cpp-inference-template
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: ai
+  dependsOn:
+    - name: kserve
+    - name: audio-cpp-kokoro-tts-model-download
+    - name: audio-cpp
+    - name: audio-cpp-rocm-runtime
+    - name: amd-gpu-hami
+      namespace: amd-gpu
+  postBuild:
+    substitute:
+      MODEL_KEY: audio-cpp-kokoro-82m-q8-874fcb41
+      INFERENCE_SERVICE_NAME: audio-cpp-kokoro-tts
+      AUDIOCPP_MODEL_ID: kokoro-tts
+      AUDIOCPP_MODEL_FAMILY: kokoro_tts
+      AUDIOCPP_MODEL_TASK: tts
+      AUDIOCPP_MODEL_FILE: Kokoro-82M-GGUF/kokoro-82m-q8_0.gguf
+      AUDIOCPP_DEFAULT_VOICE: af_heart
+      CPU_REQUEST: 500m
+      CPU_LIMIT: "2"
+      MEMORY_REQUEST: 2Gi
+      MEMORY_LIMIT: 4Gi
+      GPU_MEMORY_MIB: "3072"
+      GPU_CORES_PERCENT: "25"

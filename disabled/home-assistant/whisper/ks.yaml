@@ -2,17 +2,18 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: whisper-cpp-rocm-runtime
+  name: whisper
 spec:
   interval: 24h
   retryInterval: 2m
-  timeout: 5m
-  path: ./apps/ai/whisper-cpp-rocm-runtime/resources
+  timeout: 8m
+  path: ./disabled/home-assistant/whisper/resources
   prune: false
-  wait: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
+  targetNamespace: home-assistant
   dependsOn:
-    - name: kserve
+    - name: home-assistant
+      namespace: home-assistant
