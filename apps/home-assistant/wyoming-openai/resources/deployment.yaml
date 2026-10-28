@@ -26,13 +26,21 @@ spec:
             - name: WYOMING_LOG_LEVEL
               value: INFO
             - name: WYOMING_LANGUAGES
-              value: en
+              value: en es
             - name: STT_OPENAI_URL
-              value: http://whisper-large-v3-turbo-5359861c-predictor.ai.svc.cluster.local/v1
+              value: http://audio-cpp-qwen3-asr-predictor.ai.svc.cluster.local/v1
             - name: STT_MODELS
-              value: whisper-1
+              value: qwen3-asr
             - name: STT_BACKEND
               value: OPENAI
+            - name: TTS_OPENAI_URL
+              value: http://audio-cpp-kokoro-tts-predictor.ai.svc.cluster.local/v1
+            - name: TTS_MODELS
+              value: kokoro-tts
+            - name: TTS_BACKEND
+              value: OPENAI
+            - name: TTS_VOICES
+              value: af_heart ef_dora
           ports:
             - containerPort: 10300
               name: wyoming

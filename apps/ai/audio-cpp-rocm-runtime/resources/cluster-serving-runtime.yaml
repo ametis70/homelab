@@ -1,0 +1,67 @@
+---
+apiVersion: serving.kserve.io/v1alpha1
+kind: ClusterServingRuntime
+metadata:
+  name: audio-cpp-rocm
+  annotations:
+    serving.kserve.io/server-type: audio.cpp-rocm
+spec:
+  volumes:
+    - name: audio-cpp-runtime-cache
+      emptyDir:
+        # The compressed HIP release expands beyond 2Gi after extraction.
+        sizeLimit: 5Gi
+    - name: audio-cpp-runtime-config
+      configMap:
+        name: audio-cpp-kserve-runtime
+  supportedModelFormats:
+    - name: audio-cpp
+      version: "1"
+      autoSelect: false
+      priority: 1
+  containers:
+    - name: kserve-container
+      image: rocm/pytorch:rocm7.2.3_ubuntu24.04_py3.12_pytorch_release_2.9.1
+      imagePullPolicy: IfNotPresent
+      command:
+        - /bin/bash
+        - /opt/audio-cpp/start-audiocpp.sh
+      env:
+        - name: LD_LIBRARY_PATH
+          value: /opt/audio-cpp-runtime/espeak/usr/lib/x86_64-linux-gnu/pulseaudio:/opt/audio-cpp-runtime/espeak/usr/lib/x86_64-linux-gnu:/opt/rocm/lib
+        - name: ESPEAK_DATA_PATH
+          value: /opt/audio-cpp-runtime/espeak/usr/lib/x86_64-linux-gnu/espeak-ng-data
+      volumeMounts:
+        - name: audio-cpp-runtime-cache
+          mountPath: /opt/audio-cpp-runtime
+        - name: audio-cpp-runtime-config
+          mountPath: /opt/audio-cpp
+          readOnly: true
+      ports:
+        - name: http1
+          containerPort: 8080
+          protocol: TCP
+      readinessProbe:
+        httpGet:
+          path: /health
+          port: 8080
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+      startupProbe:
+        httpGet:
+          path: /health
+          port: 8080
+        periodSeconds: 10
+        timeoutSeconds: 10
+        failureThreshold: 180
+      resources:
+        requests:
+          cpu: 500m
+          memory: 2Gi
+      securityContext:
+        allowPrivilegeEscalation: false
+        privileged: false
+        capabilities:
+          drop:
+            - ALL

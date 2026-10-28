@@ -1,0 +1,44 @@
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: ${INFERENCE_SERVICE_NAME}
+  namespace: ai
+spec:
+  predictor:
+    minReplicas: 1
+    deploymentStrategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 0
+        maxUnavailable: 1
+    model:
+      modelFormat:
+        name: audio-cpp
+        version: "1"
+      runtime: audio-cpp-rocm
+      storageUri: pvc://ai-model-cache/${MODEL_KEY}/
+      env:
+        - name: AUDIOCPP_MODEL_ID
+          value: ${AUDIOCPP_MODEL_ID}
+        - name: AUDIOCPP_MODEL_FAMILY
+          value: ${AUDIOCPP_MODEL_FAMILY}
+        - name: AUDIOCPP_MODEL_TASK
+          value: ${AUDIOCPP_MODEL_TASK}
+        - name: AUDIOCPP_MODEL_FILE
+          value: ${AUDIOCPP_MODEL_FILE}
+        - name: AUDIOCPP_DEFAULT_VOICE
+          value: "${AUDIOCPP_DEFAULT_VOICE}"
+      resources:
+        requests:
+          cpu: "${CPU_REQUEST}"
+          memory: "${MEMORY_REQUEST}"
+          amd.com/gpu: "1"
+          amd.com/gpumem: "${GPU_MEMORY_MIB}"
+          amd.com/gpucores: "${GPU_CORES_PERCENT}"
+        limits:
+          cpu: "${CPU_LIMIT}"
+          memory: "${MEMORY_LIMIT}"
+          amd.com/gpu: "1"
+          amd.com/gpumem: "${GPU_MEMORY_MIB}"
+          amd.com/gpucores: "${GPU_CORES_PERCENT}"
