@@ -13,7 +13,7 @@ spec:
 
     image:
       repository: ghcr.io/berriai/litellm
-      tag: v1.106.1
+      tag: v1.106.6
 
     db:
       useExisting: true
