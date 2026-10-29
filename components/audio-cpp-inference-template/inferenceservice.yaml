@@ -12,12 +12,44 @@ spec:
       rollingUpdate:
         maxSurge: 0
         maxUnavailable: 1
+    initContainers:
+      - name: download-audio-model
+        image: rocm/pytorch:rocm7.2.3_ubuntu24.04_py3.12_pytorch_release_2.9.1
+        imagePullPolicy: IfNotPresent
+        command:
+          - python3
+          - /opt/audio-cpp/download-model.py
+        env:
+          - name: AUDIOCPP_MODEL_FILE
+            value: ${AUDIOCPP_MODEL_FILE}
+          - name: AUDIOCPP_MODEL_URL
+            value: ${AUDIOCPP_MODEL_URL}
+          - name: AUDIOCPP_MODEL_SHA256
+            value: ${AUDIOCPP_MODEL_SHA256}
+          - name: HF_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: huggingface-token
+                key: HF_TOKEN
+                optional: true
+        resources:
+          requests:
+            cpu: "${DOWNLOAD_CPU_REQUEST}"
+            memory: "${DOWNLOAD_MEMORY_REQUEST}"
+          limits:
+            cpu: "${DOWNLOAD_CPU_LIMIT}"
+            memory: "${DOWNLOAD_MEMORY_LIMIT}"
+        volumeMounts:
+          - name: audio-cpp-model-cache
+            mountPath: /mnt/models
+          - name: audio-cpp-runtime-config
+            mountPath: /opt/audio-cpp
+            readOnly: true
     model:
       modelFormat:
         name: audio-cpp
         version: "1"
       runtime: audio-cpp-rocm
-      storageUri: pvc://ai-model-cache/${MODEL_KEY}/
       env:
         - name: AUDIOCPP_MODEL_ID
           value: ${AUDIOCPP_MODEL_ID}

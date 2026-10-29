@@ -7,6 +7,9 @@ metadata:
     serving.kserve.io/server-type: audio.cpp-rocm
 spec:
   volumes:
+    - name: audio-cpp-model-cache
+      persistentVolumeClaim:
+        claimName: ai-model-cache
     - name: audio-cpp-runtime-cache
       emptyDir:
         # The compressed HIP release expands beyond 2Gi after extraction.
@@ -32,6 +35,9 @@ spec:
         - name: ESPEAK_DATA_PATH
           value: /opt/audio-cpp-runtime/espeak/usr/lib/x86_64-linux-gnu/espeak-ng-data
       volumeMounts:
+        - name: audio-cpp-model-cache
+          mountPath: /mnt/models
+          readOnly: true
         - name: audio-cpp-runtime-cache
           mountPath: /opt/audio-cpp-runtime
         - name: audio-cpp-runtime-config
