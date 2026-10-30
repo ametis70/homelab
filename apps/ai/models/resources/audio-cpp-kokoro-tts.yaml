@@ -9,12 +9,12 @@ spec:
   timeout: 60m
   path: ./components/audio-cpp-inference-template
   prune: true
-  wait: true
-  healthCheckExprs:
-    - apiVersion: serving.kserve.io/v1beta1
-      kind: InferenceService
-      current: "status.conditions.exists(c, c.type == 'Ready' && c.status == 'True')"
-      failed: "status.conditions.exists(c, c.type == 'Ready' && c.status == 'False')"
+  wait: false
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: audio-cpp-kokoro-tts-predictor
+      namespace: ai
   sourceRef:
     kind: GitRepository
     name: flux-system
