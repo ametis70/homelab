@@ -36,7 +36,7 @@ spec:
           value: /opt/audio-cpp-runtime/espeak/usr/lib/x86_64-linux-gnu/espeak-ng-data
       volumeMounts:
         - name: audio-cpp-model-cache
-          mountPath: /mnt/models
+          mountPath: /model-cache
           readOnly: true
         - name: audio-cpp-runtime-cache
           mountPath: /opt/audio-cpp-runtime

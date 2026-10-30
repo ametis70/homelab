@@ -2,7 +2,7 @@
 apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
-  name: ${MODEL_KEY}
+  name: ${INFERENCE_SERVICE_NAME}
   namespace: ai
   annotations:
     serving.kserve.io/autoscalerClass: "${AUTOSCALER_CLASS}"
@@ -14,15 +14,47 @@ spec:
       rollingUpdate:
         maxSurge: 0
         maxUnavailable: 1
+    initContainers:
+      - name: download-llm-model
+        image: rocm/pytorch:rocm7.2.3_ubuntu24.04_py3.12_pytorch_release_2.9.1
+        imagePullPolicy: IfNotPresent
+        command:
+          - python3
+          - /opt/llama-model-download/download-model.py
+        env:
+          - name: MODEL_CACHE_FILE
+            value: ${MODEL_CACHE_FILE}
+          - name: MODEL_URL
+            value: ${MODEL_URL}
+          - name: MODEL_SHA256
+            value: ${MODEL_SHA256}
+          - name: HF_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: huggingface-token
+                key: HF_TOKEN
+                optional: true
+        resources:
+          requests:
+            cpu: "${DOWNLOAD_CPU_REQUEST}"
+            memory: "${DOWNLOAD_MEMORY_REQUEST}"
+          limits:
+            cpu: "${DOWNLOAD_CPU_LIMIT}"
+            memory: "${DOWNLOAD_MEMORY_LIMIT}"
+        volumeMounts:
+          - name: llama-model-cache
+            mountPath: /model-cache
+          - name: llama-model-download-config
+            mountPath: /opt/llama-model-download
+            readOnly: true
     model:
       modelFormat:
         name: gguf
         version: "1"
       runtime: llama-cpp-rocm
-      storageUri: pvc://ai-model-cache/${MODEL_KEY}/
       args:
         - --model
-        - /mnt/models/${MODEL_FILE}
+        - /model-cache/${MODEL_CACHE_FILE}
         - --n-gpu-layers
         - all
         - --ctx-size

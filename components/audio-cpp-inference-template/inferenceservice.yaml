@@ -41,7 +41,7 @@ spec:
             memory: "${DOWNLOAD_MEMORY_LIMIT}"
         volumeMounts:
           - name: audio-cpp-model-cache
-            mountPath: /mnt/models
+            mountPath: /model-cache
           - name: audio-cpp-runtime-config
             mountPath: /opt/audio-cpp
             readOnly: true

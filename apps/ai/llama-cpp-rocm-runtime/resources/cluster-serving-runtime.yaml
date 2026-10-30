@@ -6,6 +6,13 @@ metadata:
   annotations:
     serving.kserve.io/server-type: llama.cpp-rocm
 spec:
+  volumes:
+    - name: llama-model-cache
+      persistentVolumeClaim:
+        claimName: ai-model-cache
+    - name: llama-model-download-config
+      configMap:
+        name: llama-cpp-model-download
   supportedModelFormats:
     - name: gguf
       version: "1"
@@ -26,6 +33,10 @@ spec:
         - "8080"
         - --no-webui
         - --jinja
+      volumeMounts:
+        - name: llama-model-cache
+          mountPath: /model-cache
+          readOnly: true
       ports:
         - name: http1
           containerPort: 8080

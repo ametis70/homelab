@@ -2,40 +2,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  # Retain the existing Flux object identity during the Gemma -> Qwen migration;
-  # changing MODEL_KEY makes its prune-enabled child remove the old Gemma Job.
-  name: gemma-4-e2b-it-model-download
-spec:
-  interval: 24h
-  retryInterval: 2m
-  timeout: 60m
-  path: ./components/model-download-template
-  prune: true
-  force: true
-  wait: true
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-    namespace: flux-system
-  targetNamespace: ai
-  dependsOn:
-    - name: kserve
-  postBuild:
-    substitute:
-      MODEL_KEY: qwen3-5-4b-q4-k-m-e87f1764
-      MODEL_URI: https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/e87f176479d0855a907a41277aca2f8ee7a09523/Qwen3.5-4B-Q4_K_M.gguf
-      DOWNLOAD_ALLOW_PATTERNS: ""
-      DOWNLOAD_JOB_NAME: qwen3-5-4b-q4-k-m-e87f1764-download-v1
-      DOWNLOAD_CPU_REQUEST: 500m
-      DOWNLOAD_CPU_LIMIT: "2"
-      DOWNLOAD_MEMORY_REQUEST: 512Mi
-      DOWNLOAD_MEMORY_LIMIT: 2Gi
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  # Retain the existing child identity so Flux can prune the Gemma InferenceService.
-  name: gemma-4-e2b-it
+  name: qwen3-5-4b
 spec:
   interval: 24h
   retryInterval: 2m
@@ -43,6 +10,11 @@ spec:
   path: ./components/llama-cpp-inference-template
   prune: true
   wait: true
+  healthCheckExprs:
+    - apiVersion: serving.kserve.io/v1beta1
+      kind: InferenceService
+      current: "status.conditions.exists(c, c.type == 'Ready' && c.status == 'True')"
+      failed: "status.conditions.exists(c, c.type == 'Ready' && c.status == 'False')"
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -50,20 +22,25 @@ spec:
   targetNamespace: ai
   dependsOn:
     - name: kserve
-    - name: gemma-4-e2b-it-model-download
     - name: llama-cpp-rocm-runtime
     - name: amd-gpu-hami
       namespace: amd-gpu
   postBuild:
     substitute:
-      MODEL_KEY: qwen3-5-4b-q4-k-m-e87f1764
-      MODEL_FILE: Qwen3.5-4B-Q4_K_M.gguf
+      INFERENCE_SERVICE_NAME: qwen3-5-4b-q4-k-m
+      MODEL_CACHE_FILE: qwen3-5-4b-q4-k-m-e87f1764/Qwen3.5-4B-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/e87f176479d0855a907a41277aca2f8ee7a09523/Qwen3.5-4B-Q4_K_M.gguf?download=true
+      MODEL_SHA256: 00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4
       MIN_REPLICAS: "1"
       AUTOSCALER_CLASS: hpa
       SERVED_MODEL_NAME: qwen3.5-4b-q4_k_m
       CONTEXT_SIZE: '"16384"'
       KV_CACHE_TYPE_K: q4_0
       KV_CACHE_TYPE_V: q4_0
+      DOWNLOAD_CPU_REQUEST: 250m
+      DOWNLOAD_CPU_LIMIT: "2"
+      DOWNLOAD_MEMORY_REQUEST: 512Mi
+      DOWNLOAD_MEMORY_LIMIT: 2Gi
       CPU_REQUEST: 500m
       CPU_LIMIT: "2"
       MEMORY_REQUEST: 3Gi

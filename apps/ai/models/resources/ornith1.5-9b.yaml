@@ -2,36 +2,6 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: ornith-1-5-9b-model-download
-spec:
-  interval: 24h
-  retryInterval: 2m
-  timeout: 60m
-  path: ./components/model-download-template
-  prune: true
-  force: true
-  wait: true
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-    namespace: flux-system
-  targetNamespace: ai
-  dependsOn:
-    - name: kserve
-  postBuild:
-    substitute:
-      MODEL_KEY: ornith-1-5-9b-q4-k-m-abdd624b
-      MODEL_URI: hf://ornith-ai/Ornith-1.5-9B-GGUF:abdd624b12ebf020b767fff532ff44fe552b28c3
-      DOWNLOAD_ALLOW_PATTERNS: Ornith-1.5-9B-Q4_K_M.gguf
-      DOWNLOAD_JOB_NAME: ornith-1-5-9b-q4-k-m-download-v1
-      DOWNLOAD_CPU_REQUEST: 500m
-      DOWNLOAD_CPU_LIMIT: "2"
-      DOWNLOAD_MEMORY_REQUEST: 512Mi
-      DOWNLOAD_MEMORY_LIMIT: 2Gi
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
   name: ornith-1-5-9b
 spec:
   interval: 24h
@@ -40,6 +10,11 @@ spec:
   path: ./components/llama-cpp-inference-template
   prune: true
   wait: true
+  healthCheckExprs:
+    - apiVersion: serving.kserve.io/v1beta1
+      kind: InferenceService
+      current: "status.conditions.exists(c, c.type == 'Ready' && c.status == 'True')"
+      failed: "status.conditions.exists(c, c.type == 'Ready' && c.status == 'False')"
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -47,20 +22,25 @@ spec:
   targetNamespace: ai
   dependsOn:
     - name: kserve
-    - name: ornith-1-5-9b-model-download
     - name: llama-cpp-rocm-runtime
     - name: amd-gpu-hami
       namespace: amd-gpu
   postBuild:
     substitute:
-      MODEL_KEY: ornith-1-5-9b-q4-k-m-abdd624b
-      MODEL_FILE: Ornith-1.5-9B-Q4_K_M.gguf
+      INFERENCE_SERVICE_NAME: ornith-1-5-9b-q4-k-m
+      MODEL_CACHE_FILE: ornith-1-5-9b-q4-k-m-abdd624b/Ornith-1.5-9B-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/ornith-ai/Ornith-1.5-9B-GGUF/resolve/abdd624b12ebf020b767fff532ff44fe552b28c3/Ornith-1.5-9B-Q4_K_M.gguf?download=true
+      MODEL_SHA256: 70c112196e0b7023803c9762752e46d29e612a92c83f995bc3ba1ceb07e8fab6
       MIN_REPLICAS: "0"
       AUTOSCALER_CLASS: none
       SERVED_MODEL_NAME: ornith-1.5-9b-q4_k_m
       CONTEXT_SIZE: '"262144"'
       KV_CACHE_TYPE_K: q4_0
       KV_CACHE_TYPE_V: q4_0
+      DOWNLOAD_CPU_REQUEST: 250m
+      DOWNLOAD_CPU_LIMIT: "2"
+      DOWNLOAD_MEMORY_REQUEST: 512Mi
+      DOWNLOAD_MEMORY_LIMIT: 2Gi
       CPU_REQUEST: 500m
       CPU_LIMIT: "2"
       MEMORY_REQUEST: 4Gi

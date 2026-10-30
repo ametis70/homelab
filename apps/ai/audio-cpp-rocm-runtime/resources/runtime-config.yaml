@@ -14,7 +14,7 @@ data:
     relative_path = os.environ["AUDIOCPP_MODEL_FILE"]
     url = os.environ["AUDIOCPP_MODEL_URL"]
     expected_sha256 = os.environ["AUDIOCPP_MODEL_SHA256"].lower()
-    target = Path("/mnt/models") / relative_path
+    target = Path("/model-cache") / relative_path
     target.parent.mkdir(parents=True, exist_ok=True)
 
     def matches(path):
@@ -98,7 +98,7 @@ data:
     : "${AUDIOCPP_MODEL_FAMILY:?missing AUDIOCPP_MODEL_FAMILY}"
     : "${AUDIOCPP_MODEL_TASK:?missing AUDIOCPP_MODEL_TASK}"
     : "${AUDIOCPP_MODEL_FILE:?missing AUDIOCPP_MODEL_FILE}"
-    model_path="/mnt/models/${AUDIOCPP_MODEL_FILE}"
+    model_path="/model-cache/${AUDIOCPP_MODEL_FILE}"
     test -s "$model_path"
 
     python3 - <<'PY'
@@ -109,7 +109,7 @@ data:
     model = {
         "id": os.environ["AUDIOCPP_MODEL_ID"],
         "family": os.environ["AUDIOCPP_MODEL_FAMILY"],
-        "path": "/mnt/models/" + os.environ["AUDIOCPP_MODEL_FILE"],
+        "path": "/model-cache/" + os.environ["AUDIOCPP_MODEL_FILE"],
         "task": os.environ["AUDIOCPP_MODEL_TASK"],
         "mode": "offline",
     }
