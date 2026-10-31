@@ -1,0 +1,49 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: swift-qwen3-8-27b-iq3-s-mtp
+spec:
+  interval: 24h
+  retryInterval: 2m
+  timeout: 60m
+  path: ./components/llama-cpp-mtp-inference-template
+  prune: true
+  wait: true
+  healthCheckExprs:
+    - apiVersion: serving.kserve.io/v1beta1
+      kind: InferenceService
+      current: "status.conditions.exists(c, c.type == 'Ready' && c.status == 'True')"
+      failed: "status.conditions.exists(c, c.type == 'Ready' && c.status == 'False')"
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: ai
+  dependsOn:
+    - name: kserve
+    - name: llama-cpp-rocm-runtime
+    - name: hami-amd-device-plugin
+      namespace: hami
+  postBuild:
+    substitute:
+      INFERENCE_SERVICE_NAME: swift-qwen3-8-27b-iq3-s-mtp
+      MODEL_CACHE_FILE: swift-qwen3-8-27b-iq3-s-mtp-9aecf1cd/Swift-1.5-Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf
+      MODEL_URL: https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF/resolve/main/Swift-1.5-Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf?download=true
+      MODEL_SHA256: 9aecf1cd41b2cb2f32a74e0d889e33855ebef43b26f43b43feb5720239e677e5
+      MIN_REPLICAS: "0"
+      AUTOSCALER_CLASS: none
+      SERVED_MODEL_NAME: swift-1.5-qwen3.8-27b-iq3_s-mtp
+      CONTEXT_SIZE: '"131072"'
+      KV_CACHE_TYPE_K: q4_0
+      KV_CACHE_TYPE_V: q4_0
+      DOWNLOAD_CPU_REQUEST: 250m
+      DOWNLOAD_CPU_LIMIT: "2"
+      DOWNLOAD_MEMORY_REQUEST: 512Mi
+      DOWNLOAD_MEMORY_LIMIT: 2Gi
+      CPU_REQUEST: "2"
+      CPU_LIMIT: "4"
+      MEMORY_REQUEST: 8Gi
+      MEMORY_LIMIT: 12Gi
+      GPU_MEMORY_MIB: "16304"
+      GPU_CORES_PERCENT: "100"

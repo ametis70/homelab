@@ -1,0 +1,86 @@
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: ${INFERENCE_SERVICE_NAME}
+  namespace: ai
+  annotations:
+    serving.kserve.io/autoscalerClass: "${AUTOSCALER_CLASS}"
+spec:
+  predictor:
+    minReplicas: ${MIN_REPLICAS}
+    deploymentStrategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 0
+        maxUnavailable: 1
+    initContainers:
+      - name: download-llm-model
+        image: rocm/pytorch:rocm7.2.3_ubuntu24.04_py3.12_pytorch_release_2.9.1
+        imagePullPolicy: IfNotPresent
+        command:
+          - python3
+          - /opt/llama-model-download/download-model.py
+        env:
+          - name: MODEL_CACHE_FILE
+            value: ${MODEL_CACHE_FILE}
+          - name: MODEL_URL
+            value: ${MODEL_URL}
+          - name: MODEL_SHA256
+            value: ${MODEL_SHA256}
+          - name: HF_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: huggingface-token
+                key: HF_TOKEN
+                optional: true
+        resources:
+          requests:
+            cpu: "${DOWNLOAD_CPU_REQUEST}"
+            memory: "${DOWNLOAD_MEMORY_REQUEST}"
+          limits:
+            cpu: "${DOWNLOAD_CPU_LIMIT}"
+            memory: "${DOWNLOAD_MEMORY_LIMIT}"
+        volumeMounts:
+          - name: llama-model-cache
+            mountPath: /model-cache
+          - name: llama-model-download-config
+            mountPath: /opt/llama-model-download
+            readOnly: true
+    model:
+      modelFormat:
+        name: gguf
+        version: "1"
+      runtime: llama-cpp-rocm
+      args:
+        - --model
+        - /model-cache/${MODEL_CACHE_FILE}
+        - --n-gpu-layers
+        - all
+        - --ctx-size
+        - "${CONTEXT_SIZE}"
+        - --parallel
+        - "1"
+        - --cache-type-k
+        - ${KV_CACHE_TYPE_K}
+        - --cache-type-v
+        - ${KV_CACHE_TYPE_V}
+        - --spec-type
+        - draft-mtp
+        - --spec-draft-n-max
+        - "3"
+        - --alias
+        - ${SERVED_MODEL_NAME}
+      resources:
+        requests:
+          cpu: "${CPU_REQUEST}"
+          memory: "${MEMORY_REQUEST}"
+          amd.com/gpu: "1"
+          amd.com/gpumem: "${GPU_MEMORY_MIB}"
+          amd.com/gpucores: "${GPU_CORES_PERCENT}"
+        limits:
+          cpu: "${CPU_LIMIT}"
+          memory: "${MEMORY_LIMIT}"
+          amd.com/gpu: "1"
+          amd.com/gpumem: "${GPU_MEMORY_MIB}"
+          amd.com/gpucores: "${GPU_CORES_PERCENT}"

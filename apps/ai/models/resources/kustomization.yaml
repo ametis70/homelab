@@ -5,6 +5,7 @@ namespace: ai
 resources:
   - qwen3-5-4b.yaml
   - ornith1.5-9b.yaml
+  - swift-qwen3-8-27b-iq3-s-mtp.yaml
   - audio-cpp-kokoro-tts.yaml
   - audio-cpp-qwen3-asr.yaml
   - external-secrets.yaml
