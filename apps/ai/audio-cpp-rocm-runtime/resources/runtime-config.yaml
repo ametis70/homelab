@@ -16,6 +16,8 @@ data:
     expected_sha256 = os.environ["AUDIOCPP_MODEL_SHA256"].lower()
     target = Path("/model-cache") / relative_path
     target.parent.mkdir(parents=True, exist_ok=True)
+    runtime_cache = Path("/model-cache/runtime/audio-cpp/4d0688267b2b8c421238994031c720d52316cacc24150ea613ee6bb2e5b13dfc")
+    runtime_cache.mkdir(parents=True, exist_ok=True)
 
     def matches(path):
         if not path.is_file():

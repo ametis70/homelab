@@ -10,10 +10,6 @@ spec:
     - name: audio-cpp-model-cache
       persistentVolumeClaim:
         claimName: ai-model-cache
-    - name: audio-cpp-runtime-cache
-      emptyDir:
-        # The compressed HIP release expands beyond 2Gi after extraction.
-        sizeLimit: 5Gi
     - name: audio-cpp-runtime-config
       configMap:
         name: audio-cpp-kserve-runtime
@@ -38,8 +34,10 @@ spec:
         - name: audio-cpp-model-cache
           mountPath: /model-cache
           readOnly: true
-        - name: audio-cpp-runtime-cache
+        - name: audio-cpp-model-cache
           mountPath: /opt/audio-cpp-runtime
+          # The model-download init container creates this checksum-keyed PVC subdirectory.
+          subPath: runtime/audio-cpp/4d0688267b2b8c421238994031c720d52316cacc24150ea613ee6bb2e5b13dfc
         - name: audio-cpp-runtime-config
           mountPath: /opt/audio-cpp
           readOnly: true
