@@ -24,8 +24,8 @@ spec:
     - name: kserve
     - name: audio-cpp
     - name: audio-cpp-rocm-runtime
-    - name: amd-gpu-hami
-      namespace: amd-gpu
+    - name: hami-amd-device-plugin
+      namespace: hami
   postBuild:
     substitute:
       INFERENCE_SERVICE_NAME: audio-cpp-qwen3-asr

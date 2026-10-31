@@ -49,8 +49,8 @@ spec:
     - name: kserve
     - name: whisper-large-v3-turbo-model-download
     - name: whisper-cpp-rocm-runtime
-    - name: amd-gpu-hami
-      namespace: amd-gpu
+    - name: hami-amd-device-plugin
+      namespace: hami
   postBuild:
     substitute:
       MODEL_KEY: whisper-large-v3-turbo-5359861c
