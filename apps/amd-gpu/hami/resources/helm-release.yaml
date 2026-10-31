@@ -36,14 +36,14 @@ spec:
   interval: 24h
   chart:
     spec:
-      chart: ./helm/amd-gpu
+      chart: amd-gpu
+      version: 0.0.3
       sourceRef:
-        kind: GitRepository
+        kind: HelmRepository
         name: hami-amd-device-plugin
         namespace: flux-system
   values:
-    # Radeon/RDNA support is experimental in HAMi's AMD plugin. This device is gfx1200;
-    # splitCount=5 enables five software vGPU slots, not hardware partitions.
+    # gfx1200 uses five software vGPU slots, not hardware partitions.
     node_selector_enabled: true
     node_selector:
       dedicated: ai
@@ -56,9 +56,8 @@ spec:
       image:
         repository: ghcr.io/project-hami/amd-device-plugin
         tag: 0.0.3
-      operatingMode: cu
+      # Zero selects the upstream default (2 slots on gfx12); set 5 explicitly.
       splitCount: 5
-      reportNodeCapacity: true
       hookInstaller:
         enabled: true
       # The vGPU hook needs glibc >= 2.34; vLLM's Ubuntu 24.04 image satisfies this.

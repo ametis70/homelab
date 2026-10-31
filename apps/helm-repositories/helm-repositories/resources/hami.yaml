@@ -9,12 +9,10 @@ spec:
   url: https://project-hami.github.io/HAMi/
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
+kind: HelmRepository
 metadata:
   name: hami-amd-device-plugin
   namespace: flux-system
 spec:
   interval: 24h
-  url: https://github.com/Project-HAMi/amd-device-plugin
-  ref:
-    tag: v0.0.3
+  url: https://raw.githubusercontent.com/Project-HAMi/amd-device-plugin/helm-chart-release

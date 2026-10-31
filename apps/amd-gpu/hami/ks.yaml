@@ -16,6 +16,5 @@ spec:
     namespace: flux-system
   targetNamespace: kube-system
   dependsOn:
-    - name: amd-gpu-device-plugin
     - name: helm-repositories
       namespace: flux-system

@@ -72,15 +72,7 @@ spec:
         value: "postgresql://$(PGVECTOR_USER):$(PGVECTOR_PASSWORD)@openwebui-postgres-rw:5432/openwebui"
       - name: VECTOR_DB
         value: "pgvector"
-      - name: OLLAMA_BASE_URL
-        value: "http://external-ollama.traefik.svc.cluster.local:11434"
-      - name: ENABLE_OLLAMA_API
-        value: "true"
       - name: DATABASE_URL
         value: "postgresql://$(PGVECTOR_USER):$(PGVECTOR_PASSWORD)@openwebui-postgres-rw:5432/openwebui"
       - name: CORS_ALLOW_ORIGIN
         value: "https://openwebui.${DOMAIN}"
-      - name: RAG_EMBEDDING_ENGINE
-        value: "ollama"
-      - name: RAG_EMBEDDING_MODEL
-        value: "nomic-embed-text:latest"
