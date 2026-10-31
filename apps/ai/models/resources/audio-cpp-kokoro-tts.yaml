@@ -22,7 +22,6 @@ spec:
   targetNamespace: ai
   dependsOn:
     - name: kserve
-    - name: audio-cpp
     - name: audio-cpp-rocm-runtime
     - name: hami-amd-device-plugin
       namespace: hami
