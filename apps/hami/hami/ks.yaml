@@ -2,19 +2,19 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: amd-gpu-hami
+  name: hami
 spec:
   interval: 24h
   retryInterval: 2m
   timeout: 10m
-  path: ./apps/amd-gpu/hami/resources
+  path: ./apps/hami/hami/resources
   prune: true
   wait: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: kube-system
+  targetNamespace: hami
   dependsOn:
     - name: helm-repositories
       namespace: flux-system
