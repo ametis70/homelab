@@ -18,3 +18,5 @@ spec:
   dependsOn:
     - name: multus-cni
       namespace: multus-cni
+    - name: whereabouts
+      namespace: whereabouts

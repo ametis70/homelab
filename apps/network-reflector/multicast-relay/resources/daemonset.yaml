@@ -15,6 +15,7 @@ spec:
       labels:
         app: multicast-relay
       annotations:
+        network-reflector.home.arpa/ipam-revision: "whereabouts-v1"
         k8s.v1.cni.cncf.io/networks: |
           [
             {

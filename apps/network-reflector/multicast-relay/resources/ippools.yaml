@@ -1,0 +1,27 @@
+---
+apiVersion: whereabouts.cni.cncf.io/v1alpha1
+kind: IPPool
+metadata:
+  name: 10.0.10.0-24
+  namespace: network-reflector
+spec:
+  allocations: {}
+  range: 10.0.10.0/24
+---
+apiVersion: whereabouts.cni.cncf.io/v1alpha1
+kind: IPPool
+metadata:
+  name: 10.0.20.0-24
+  namespace: network-reflector
+spec:
+  allocations: {}
+  range: 10.0.20.0/24
+---
+apiVersion: whereabouts.cni.cncf.io/v1alpha1
+kind: IPPool
+metadata:
+  name: 10.0.100.0-24
+  namespace: network-reflector
+spec:
+  allocations: {}
+  range: 10.0.100.0/24
