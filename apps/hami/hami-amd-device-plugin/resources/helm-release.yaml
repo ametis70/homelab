@@ -27,7 +27,7 @@ spec:
     dp:
       image:
         repository: ghcr.io/project-hami/amd-device-plugin
-        tag: 0.0.3
+        tag: 0.0.4
       # Zero selects the upstream default (2 slots on gfx12); set 5 explicitly.
       splitCount: 5
       hookInstaller:
