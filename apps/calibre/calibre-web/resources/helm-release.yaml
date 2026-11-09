@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: ghcr.io/bjw-s-labs/calibre-web
-              tag: 0.6.26@sha256:ce359b0c3a3ec5625e845aeefd3729298bdacee4b74838729ec4035bcef7aafc
+              tag: 0.6.27@sha256:5d08f83d3bb2ca51bcce0ca46c2c2c59aa4bbb6c384317dac7f241e51c976e58
             env:
               TZ: "America/Argentina/Buenos_Aires"
             probes:
