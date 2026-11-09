@@ -73,7 +73,7 @@ spec:
           app:
             image:
               repository: ghcr.io/ametis70/romm-testing
-              tag: replace-exported-assets@sha256:80b9c27f64989903bfc91184368333eacc915dab21f189d17f8d728ff030cbbf
+              tag: replace-exported-assets@sha256:492449cd0122222c8e8d321b5eb39593e2ab5873bd8e1e17c9fe50a2598a0be1
             env:
               TZ: "America/Argentina/Buenos_Aires"
               LOGLEVEL: INFO
