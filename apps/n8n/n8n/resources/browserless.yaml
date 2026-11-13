@@ -28,7 +28,7 @@ spec:
           app:
             image:
               repository: ghcr.io/browserless/chromium
-              tag: v2.54.2@sha256:8da772c56e5b64937a48447e988d1d42319809dd562098b0d08ee3c0f259d619
+              tag: v2.63.1@sha256:a79e03601b98ca7dc69bb518e7ffec9bbc7e368cde9b28d793a0c81e3193c0bb
             env:
               CONCURRENT: 5
               QUEUED: 10
