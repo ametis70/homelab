@@ -22,7 +22,7 @@ spec:
     - name: kserve-container
       # Official llama.cpp ROCm server image, built with gfx1200 support.
       # Pin the image manifest; update deliberately after validating new builds.
-      image: ghcr.io/ggml-org/llama.cpp:server-rocm@sha256:f30115a8d7aec88e2909db15492b28a262f2263fa511b1bd14f98768856baa47
+      image: ghcr.io/ggml-org/llama.cpp:server-rocm@sha256:5e38ebc77f703dcf7b9a608c967f7a025a19c8dd8901f52a878f929718ab932a
       imagePullPolicy: IfNotPresent
       command:
         - /app/llama-server
